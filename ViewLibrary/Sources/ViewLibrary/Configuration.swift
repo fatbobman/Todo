@@ -8,7 +8,7 @@
 import Foundation
 
 enum Configuration {
-    static let titleLengthRange:ClosedRange = 4...50
+    static let titleLengthRange:ClosedRange = 1...50
     static let memoLineLimit:ClosedRange = 10...15
     static let groupTitleMaxLength = 20
 }

@@ -45,12 +45,11 @@ public struct InputNewTaskView: View {
                 TextField("内容介于 \(Configuration.titleLengthRange.rangeDescription) 个字符", text: $taskText)
                     .textFieldStyle(.roundedBorder)
                     .focused($editing)
-                    .submitLabel(.done)
                     .onSubmit {
                         if allowToSubmit {
                             submit()
-                        } else if !taskText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty  {
-                            editing = true
+                        } else {
+                            taskText = ""
                         }
                     }
                 Button {
@@ -70,14 +69,22 @@ public struct InputNewTaskView: View {
     }
 
     func submit() {
-        let task = TodoTask(id: .string("createNewTask"), priority: .standard, createDate: .now, title: taskText, completed: false, myDay: myDay)
+        let task = TodoTask(
+            id: .string("createNewTask"),
+            priority: .standard,
+            createDate: .now,
+            title: taskText.trimmingCharacters(in: .whitespacesAndNewlines),
+            completed: false,
+            myDay: myDay
+        )
         createNewTask(task, taskSource)
         taskText = ""
         editing = false
     }
 
     var allowToSubmit: Bool {
-        (Configuration.titleLengthRange).contains(taskText.count)
+        (Configuration.titleLengthRange)
+            .contains(taskText.trimmingCharacters(in: .whitespacesAndNewlines).count)
     }
 }
 
