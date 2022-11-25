@@ -42,7 +42,7 @@ public struct InputNewTaskView: View {
                 }
                 .foregroundColor(myDay ? .orange : nil)
                 .buttonStyle(.plain)
-                TextField("内容介于 \(Configuration.titleLengthRange.rangeDescription) 个字符", text: $taskText)
+                TextField("between \(Configuration.titleLengthRange.rangeDescription) characters", text: $taskText)
                     .textFieldStyle(.roundedBorder)
                     .focused($editing)
                     .onSubmit {

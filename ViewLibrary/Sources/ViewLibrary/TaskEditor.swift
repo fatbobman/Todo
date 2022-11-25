@@ -95,7 +95,7 @@ public struct TaskEditorView: View {
                 }
                 .foregroundColor(task.myDay ? .orange : nil)
             } header: {
-                Text("内容长度 \(Configuration.titleLengthRange.rangeDescription)")
+                Text("between \(Configuration.titleLengthRange.rangeDescription) characters")
                     .font(.caption2)
                     .foregroundColor(!(Configuration.titleLengthRange).contains(task.title.count) ? .red : .clear)
                     .frame(maxWidth: .infinity, alignment: .trailing)
