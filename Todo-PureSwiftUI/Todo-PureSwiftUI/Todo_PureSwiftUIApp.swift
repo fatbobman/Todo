@@ -79,6 +79,10 @@ struct Todo_PureSwiftUIApp: App {
                     guard let index = await dataSource.tasks.firstIndex(where: { $0.id == task.id }) else { return result }
                     return await dataSource.tasks[index]
                 }
+                .environment(\.updateMemo) { task, memo in
+                    guard let index = await dataSource.tasks.firstIndex(where: { $0.id == task.id }) else { return }
+                    await (dataSource.tasks[index]._object as? MockTask)?.memo = memo
+                }
         }
     }
 }

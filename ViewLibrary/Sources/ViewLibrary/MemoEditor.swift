@@ -9,7 +9,7 @@ import Core
 import Foundation
 import SwiftUI
 
-struct MemoEditor: View {
+public struct MemoEditor: View {
     let task: TodoTask
     let dismiss: () -> Void
     let updateMemo: (TodoTask, TaskMemo?) -> Void
@@ -22,7 +22,7 @@ struct MemoEditor: View {
         case new, edit
     }
 
-    init(task: TodoTask,
+    public init(task: TodoTask,
          dismiss: @escaping () -> Void,
          updateMemo: @escaping (TodoTask, TaskMemo?) -> Void) {
         self.task = task
@@ -39,7 +39,7 @@ struct MemoEditor: View {
         self.updateMemo = updateMemo
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             Form {
                 TextField("请输入 Memo", text: $text, axis: .vertical)

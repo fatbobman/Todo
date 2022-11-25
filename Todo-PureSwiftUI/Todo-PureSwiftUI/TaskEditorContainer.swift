@@ -14,8 +14,10 @@ struct TaskEditorContainerView: View {
     @Environment(\.deleteTask) private var deleteTaskEnv
     @Environment(\.updateTask) private var updateTaskEnv
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.updateMemo) private var updateMemoEnv
     @EnvironmentObject private var holder: SelectionHolder
     @State private var taskToBeDeleted: TodoTask?
+    @State private var editingMemoOfTask: TodoTask?
 
     var body: some View {
         if let task = holder.selectedTask {
@@ -23,7 +25,7 @@ struct TaskEditorContainerView: View {
                 task: task,
                 updateTask: updateTask,
                 deleteTaskButtonTapped: deleteTaskButtonTapped,
-                editMemoButtonTapped: { _ in },
+                editMemoButtonTapped: { editingMemoOfTask = $0 },
                 dismissButtonTapped: {}
             )
             .alert(
@@ -39,6 +41,16 @@ struct TaskEditorContainerView: View {
                     Text("Once deleted, data is irrecoverable")
                 }
             )
+            .sheet(isPresented: .isPresented($editingMemoOfTask)) {
+                if let editingMemoOfTask {
+                    MemoEditor(
+                        task: editingMemoOfTask,
+                        dismiss: { self.editingMemoOfTask = nil },
+                        updateMemo: updateMemo
+                    )
+                    .interactiveDismissDisabled(true)
+                }
+            }
         }
     }
 
@@ -55,6 +67,12 @@ struct TaskEditorContainerView: View {
     private func updateTask(task: TodoTask) {
         Task {
             await updateTaskEnv(task)
+        }
+    }
+
+    private func updateMemo(task: TodoTask, memo: TaskMemo?) {
+        Task {
+            await updateMemoEnv(task, memo)
         }
     }
 }
