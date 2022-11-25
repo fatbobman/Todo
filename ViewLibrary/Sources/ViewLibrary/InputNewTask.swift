@@ -65,7 +65,6 @@ public struct InputNewTaskView: View {
             .padding(.horizontal, 20)
         }
         .background(Material.bar, ignoresSafeAreaEdges: .bottom)
-        .scrollDismissesKeyboard(.immediately)
     }
 
     func submit() {
