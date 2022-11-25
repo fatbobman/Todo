@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Todo-PureSwiftUI/Todo-PureSwiftUI.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Core">
+   </FileRef>
+   <FileRef
+      location = "group:ViewLibrary">
+   </FileRef>
+</Workspace>
