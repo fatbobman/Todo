@@ -17,72 +17,65 @@ struct TaskListContainerView: View {
     @Environment(\.moveTask) private var moveTaskEnv
 
     @State private var taskToBeDeleted: TodoTask?
-    @State private var selectedTask: TodoTask?
     @State private var taskToBeMoved: TodoTask?
     @State private var sortType: TaskSortType = .title
-
-    private let taskSource: TaskSource
-
-    init(taskSource: TaskSource) {
-        self.taskSource = taskSource
-    }
+    @StateObject private var holder = SelectedTaskHolder()
+    @ObservedObject var sourceHolder: SelectedSourceHolder
 
     var body: some View {
-        TaskListView(
-            taskSource: taskSource,
-            taskSortType: sortType,
-            updateTask: updateTask,
-            deleteTaskButtonTapped: deleteTaskButtonTapped,
-            moveTaskButtonTapped: moveTaskButtonTapped,
-            taskCellTapped: taskCellTapped
-        )
-        .safeAreaInset(edge: .bottom) {
-            InputNewTaskView(
+        if let taskSource = sourceHolder.selectedTaskSource {
+            TaskListView(
                 taskSource: taskSource,
-                createNewTask: createNewTask
+                taskSortType: sortType,
+                updateTask: updateTask,
+                deleteTaskButtonTapped: deleteTaskButtonTapped,
+                moveTaskButtonTapped: moveTaskButtonTapped,
+                taskCellTapped: taskCellTapped
             )
-        }
-        // 目前用 navigationTitle 有闪烁 bug
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                TaskSortButton(taskSortType: $sortType)
-            }
-            ToolbarItem(placement: .principal) {
-                Text(taskListTitle).bold()
-            }
-        }
-        .sheet(isPresented: .isPresented($taskToBeMoved)) {
-            if let taskToBeMoved {
-                MoveTaskToNewGroupView(
-                    task: taskToBeMoved,
-                    dismiss: { self.taskToBeMoved = nil },
-                    taskCellTapped: taskCellTapped
+            .safeAreaInset(edge: .bottom) {
+                InputNewTaskView(
+                    taskSource: taskSource,
+                    createNewTask: createNewTask
                 )
             }
-        }
-        .alert(
-            "Delete Task",
-            isPresented: .isPresented($taskToBeDeleted),
-            actions: {
-                Button("Confirm", role: .destructive) {
-                    performDeleteTask()
+            // 目前用 navigationTitle 有闪烁 bug
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    TaskSortButton(taskSortType: $sortType)
                 }
-                Button("Cancel", role: .cancel) {}
-            },
-            message: {
-                Text("Once deleted, data is irrecoverable")
             }
-        )
-        .navigationDestination(isPresented: .isPresented($selectedTask)) {
-            TaskEditorContainerView(
-                task: selectedTask ?? .placeHold
+            .navigationTitle(taskListTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: .isPresented($taskToBeMoved)) {
+                if let taskToBeMoved {
+                    MoveTaskToNewGroupView(
+                        task: taskToBeMoved,
+                        dismiss: { self.taskToBeMoved = nil },
+                        taskCellTapped: taskCellTapped
+                    )
+                }
+            }
+            .alert(
+                "Delete Task",
+                isPresented: .isPresented($taskToBeDeleted),
+                actions: {
+                    Button("Confirm", role: .destructive) {
+                        performDeleteTask()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                },
+                message: {
+                    Text("Once deleted, data is irrecoverable")
+                }
             )
-            .id(self.selectedTask == nil) // 解决因为预创建实例，导致的视图 body 值不正确的问题
+            .navigationDestination(isPresented: .isPresented($holder.selectedTask)) {
+                TaskEditorContainerView(taskHolder: holder)
+            }
         }
     }
 
     private var taskListTitle: String {
-        switch taskSource {
+        switch sourceHolder.selectedTaskSource {
         case .all:
             return "All Tasks"
         case .completed:
@@ -97,7 +90,7 @@ struct TaskListContainerView: View {
     }
 
     private func dismissTaskDetail() {
-        self.selectedTask = nil
+        holder.selectedTask = nil
     }
 
     private func deleteTaskButtonTapped(task: TodoTask) {
@@ -110,7 +103,7 @@ struct TaskListContainerView: View {
     }
 
     private func taskCellTapped(task: TodoTask) {
-        selectedTask = task
+        holder.selectedTask = task
     }
 
     private func updateTask(task: TodoTask) {
@@ -153,12 +146,14 @@ final class ListContainerDataSource: ObservableObject {
     static let share = ListContainerDataSource()
 }
 
+private let selectedSourceHolder = SelectedSourceHolder(selectedTaskSource: .all)
+
 struct TaskListContainerRootForPreview: View {
     @StateObject var dataSource = ListContainerDataSource()
     @State var id = UUID()
     var body: some View {
         VStack {
-            TaskListContainerView(taskSource: .myDay)
+            TaskListContainerView(sourceHolder: selectedSourceHolder)
                 .transformEnvironment(\.dataSource) {
                     $0.unCompletedTasks = .mockObjects(.init(dataSource.unCompleted))
                     $0.completedTasks = .mockObjects(.init(dataSource.completed))
@@ -200,14 +195,3 @@ struct TaskListContainerPreview: PreviewProvider {
     }
 }
 #endif
-
-struct LazyView<Content: View>: View {
-    let build: () -> Content
-    init(_ build: @autoclosure @escaping () -> Content) {
-        self.build = build
-    }
-
-    var body: Content {
-        build()
-    }
-}

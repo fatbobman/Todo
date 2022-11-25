@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		768530332930BF9400BDDA68 /* SelectedHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 768530322930BF9400BDDA68 /* SelectedHolder.swift */; };
 		76DBA6E52930A37700E1352A /* Todo_PureSwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76DBA6E42930A37700E1352A /* Todo_PureSwiftUIApp.swift */; };
 		76DBA6E72930A37700E1352A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76DBA6E62930A37700E1352A /* ContentView.swift */; };
 		76DBA6E92930A37800E1352A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76DBA6E82930A37800E1352A /* Assets.xcassets */; };
@@ -21,6 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		768530322930BF9400BDDA68 /* SelectedHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedHolder.swift; sourceTree = "<group>"; };
 		76DBA6E12930A37700E1352A /* Todo-PureSwiftUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Todo-PureSwiftUI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		76DBA6E42930A37700E1352A /* Todo_PureSwiftUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Todo_PureSwiftUIApp.swift; sourceTree = "<group>"; };
 		76DBA6E62930A37700E1352A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 				76DBA7042930A4C400E1352A /* TaskEditorContainer.swift */,
 				76DBA7052930A4C400E1352A /* TaskListContainer.swift */,
 				76DBA6E42930A37700E1352A /* Todo_PureSwiftUIApp.swift */,
+				768530322930BF9400BDDA68 /* SelectedHolder.swift */,
 				76DBA6E62930A37700E1352A /* ContentView.swift */,
 				76DBA6E82930A37800E1352A /* Assets.xcassets */,
 				76DBA6EA2930A37800E1352A /* Preview Content */,
@@ -174,6 +177,7 @@
 				76DBA7092930A4C500E1352A /* TaskEditorContainer.swift in Sources */,
 				76DBA70B2930A4C500E1352A /* GroupListContianer.swift in Sources */,
 				76DBA7082930A4C500E1352A /* Environment.swift in Sources */,
+				768530332930BF9400BDDA68 /* SelectedHolder.swift in Sources */,
 				76DBA6E52930A37700E1352A /* Todo_PureSwiftUIApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

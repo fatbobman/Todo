@@ -5,40 +5,43 @@
 //  Created by Yang Xu on 2022/11/25.
 //
 
+import Core
 import Foundation
 import SwiftUI
-import Core
 import ViewLibrary
 
-struct TaskEditorContainerView:View {
+struct TaskEditorContainerView: View {
     @Environment(\.deleteTask) private var deleteTaskEnv
     @Environment(\.updateTask) private var updateTaskEnv
     @Environment(\.dismiss) private var dismiss
 
-    let task:TodoTask
-
+//    let task:TodoTask
+    @ObservedObject var taskHolder: SelectedTaskHolder
     @State private var taskToBeDeleted: TodoTask?
+
     var body: some View {
-        TaskEditorView(
-            task: task,
-            updateTask: updateTask,
-            deleteTaskButtonTapped: deleteTaskButtonTapped,
-            editMemoButtonTapped: { _ in },
-            dismissButtonTapped: {  }
-        )
-        .alert(
-            "Delete Task",
-            isPresented: .isPresented($taskToBeDeleted),
-            actions: {
-                Button("Confirm", role: .destructive) {
-                    performDeleteTask()
+        if let task = taskHolder.selectedTask {
+            TaskEditorView(
+                task: task,
+                updateTask: updateTask,
+                deleteTaskButtonTapped: deleteTaskButtonTapped,
+                editMemoButtonTapped: { _ in },
+                dismissButtonTapped: {}
+            )
+            .alert(
+                "Delete Task",
+                isPresented: .isPresented($taskToBeDeleted),
+                actions: {
+                    Button("Confirm", role: .destructive) {
+                        performDeleteTask()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                },
+                message: {
+                    Text("Once deleted, data is irrecoverable")
                 }
-                Button("Cancel", role: .cancel) {}
-            },
-            message: {
-                Text("Once deleted, data is irrecoverable")
-            }
-        )
+            )
+        }
     }
 
     private func deleteTaskButtonTapped(task: TodoTask) {
@@ -56,5 +59,4 @@ struct TaskEditorContainerView:View {
             await updateTaskEnv(task)
         }
     }
-
 }

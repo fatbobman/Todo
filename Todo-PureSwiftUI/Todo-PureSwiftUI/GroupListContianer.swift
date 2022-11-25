@@ -17,7 +17,9 @@ struct GroupListContainerView: View {
 
     @State private var groupEditMode: EditMode?
     @State private var groupToBeDeleted: TodoGroup?
-    @State private var selectedTaskSource: TaskSource?
+    // navigationDestination(isPresented:) 会创建一个新的上下文，该上下文对视图中的支持暂时有问题
+    // 会导致导航后数据出现不同不的情况。将数据保存在视图外并传递引用才可以解决这个问题
+    @StateObject private var sourceHolder = SelectedSourceHolder()
 
     var body: some View {
         NavigationStack {
@@ -27,10 +29,8 @@ struct GroupListContainerView: View {
                 groupCellTapped: groupCellTapped,
                 createNewGroupButtonTapped: createNewGroupButtonTapped
             )
-            .navigationDestination(isPresented: .isPresented($selectedTaskSource)) {
-                // 用 if let selectedTaskSource 会出现 Toolbar 闪烁的情况，改用 ??
-                TaskListContainerView(taskSource: selectedTaskSource ?? .all)
-                    .id(selectedTaskSource == .myDay) // 解决因为预创建实例，导致的视图 body 值不正确的问题
+            .navigationDestination(isPresented: .isPresented($sourceHolder.selectedTaskSource)) {
+                TaskListContainerView(sourceHolder: sourceHolder)
             }
             .alert(
                 groupEditMode == .new ? "New Group" : "Edit Group",
@@ -67,7 +67,7 @@ struct GroupListContainerView: View {
     }
 
     private func groupCellTapped(taskSource: TaskSource) {
-        selectedTaskSource = taskSource
+        sourceHolder.selectedTaskSource = taskSource
     }
 
     private func deletedGroupButtonTapped(group: TodoGroup) {
