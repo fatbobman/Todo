@@ -19,11 +19,10 @@ struct TaskListContainerView: View {
     @State private var taskToBeDeleted: TodoTask?
     @State private var taskToBeMoved: TodoTask?
     @State private var sortType: TaskSortType = .title
-    @StateObject private var holder = SelectedTaskHolder()
-    @ObservedObject var sourceHolder: SelectedSourceHolder
+    @EnvironmentObject private var holder: SelectionHolder
 
     var body: some View {
-        if let taskSource = sourceHolder.selectedTaskSource {
+        if let taskSource = holder.selectedTaskSource {
             TaskListView(
                 taskSource: taskSource,
                 taskSortType: sortType,
@@ -69,13 +68,13 @@ struct TaskListContainerView: View {
                 }
             )
             .navigationDestination(isPresented: .isPresented($holder.selectedTask)) {
-                TaskEditorContainerView(taskHolder: holder)
+                TaskEditorContainerView()
             }
         }
     }
 
     private var taskListTitle: String {
-        switch sourceHolder.selectedTaskSource {
+        switch holder.selectedTaskSource {
         case .all:
             return "All Tasks"
         case .completed:
@@ -146,14 +145,13 @@ final class ListContainerDataSource: ObservableObject {
     static let share = ListContainerDataSource()
 }
 
-private let selectedSourceHolder = SelectedSourceHolder(selectedTaskSource: .all)
-
 struct TaskListContainerRootForPreview: View {
     @StateObject var dataSource = ListContainerDataSource()
     @State var id = UUID()
+
     var body: some View {
-        VStack {
-            TaskListContainerView(sourceHolder: selectedSourceHolder)
+        NavigationStack {
+            TaskListContainerView()
                 .transformEnvironment(\.dataSource) {
                     $0.unCompletedTasks = .mockObjects(.init(dataSource.unCompleted))
                     $0.completedTasks = .mockObjects(.init(dataSource.completed))
@@ -190,8 +188,10 @@ struct TaskListContainerRootForPreview: View {
 }
 
 struct TaskListContainerPreview: PreviewProvider {
+    @State static var selectedSourceHolder = SelectionHolder(selectedTaskSource: .all)
     static var previews: some View {
         TaskListContainerRootForPreview()
+            .environmentObject(selectedSourceHolder)
     }
 }
 #endif

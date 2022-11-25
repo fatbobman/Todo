@@ -5,8 +5,8 @@
 //  Created by Yang Xu on 2022/11/25.
 //
 
-import SwiftUI
 import Core
+import SwiftUI
 import ViewLibrary
 
 @main
@@ -18,10 +18,12 @@ struct Todo_PureSwiftUIApp: App {
     ]
     @StateObject var dataSource = ListContainerDataSource()
     @State var id = UUID()
+    @StateObject var selectionHolder = SelectionHolder()
 
     var body: some Scene {
         WindowGroup {
             GroupListContainerView()
+                .environmentObject(selectionHolder) // keep
                 .transformEnvironment(\.dataSource) {
                     $0.groups = .mockObjects(.init(
                         groups
@@ -30,14 +32,14 @@ struct Todo_PureSwiftUIApp: App {
                     $0.completedTasks = .mockObjects(.init(dataSource.completed))
                 }
                 .environment(\.updateGroup) { group in
-                        if group.id == .string("createNewGroup") {
-                            let newGroup = TodoGroup(id: .uuid(UUID()), title: group.title, taskCount: 0)
-                            await MainActor.run {
-                                groups.append(MockGroup(newGroup).eraseToAny())
-                            }
+                    if group.id == .string("createNewGroup") {
+                        let newGroup = TodoGroup(id: .uuid(UUID()), title: group.title, taskCount: 0)
+                        await MainActor.run {
+                            groups.append(MockGroup(newGroup).eraseToAny())
                         }
-                        guard let index = await groups.firstIndex(where: { $0.id == group.id }) else { return }
-                        await (groups[index]._object as? MockGroup)?.title = group.title
+                    }
+                    guard let index = await groups.firstIndex(where: { $0.id == group.id }) else { return }
+                    await (groups[index]._object as? MockGroup)?.title = group.title
                 }
                 .environment(\.deleteGroup) { group in
                     await MainActor.run {
@@ -72,10 +74,10 @@ struct Todo_PureSwiftUIApp: App {
                         dataSource.tasks.append(MockTask(newTask).eraseToAny())
                     }
                 }
-                .environment(\.getTaskObject){ task in
-                    let result:AnyConvertibleValueObservableObject<TodoTask>? = nil
+                .environment(\.getTaskObject) { task in
+                    let result: AnyConvertibleValueObservableObject<TodoTask>? = nil
                     guard let index = await dataSource.tasks.firstIndex(where: { $0.id == task.id }) else { return result }
-                        return await dataSource.tasks[index]
+                    return await dataSource.tasks[index]
                 }
         }
     }

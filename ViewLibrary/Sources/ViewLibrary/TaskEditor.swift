@@ -51,11 +51,11 @@ public struct TaskEditorView: View {
                                 editTitle = true
                             }
                             .foregroundColor(editTitle ? nil : .clear)
-                            .submitLabel(.done)
+                            .submitLabel(.continue)
                             .onSubmit {
                                 editTitle = true
                             }
-                            .onChange(of:task.title){ _ in
+                            .onChange(of: task.title) { _ in
                                 task.title = task.title.components(separatedBy: .newlines).joined()
                             }
                         if !editTitle {

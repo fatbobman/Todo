@@ -19,7 +19,7 @@ struct GroupListContainerView: View {
     @State private var groupToBeDeleted: TodoGroup?
     // navigationDestination(isPresented:) 会创建一个新的上下文，该上下文对视图中的支持暂时有问题
     // 会导致导航后数据出现不同不的情况。将数据保存在视图外并传递引用才可以解决这个问题
-    @StateObject private var sourceHolder = SelectedSourceHolder()
+    @EnvironmentObject private var sourceHolder: SelectionHolder
 
     var body: some View {
         NavigationStack {
@@ -30,7 +30,7 @@ struct GroupListContainerView: View {
                 createNewGroupButtonTapped: createNewGroupButtonTapped
             )
             .navigationDestination(isPresented: .isPresented($sourceHolder.selectedTaskSource)) {
-                TaskListContainerView(sourceHolder: sourceHolder)
+                TaskListContainerView()
             }
             .alert(
                 groupEditMode == .new ? "New Group" : "Edit Group",
@@ -102,8 +102,10 @@ private var groups: [AnyConvertibleValueObservableObject<TodoGroup>] = [
 ]
 
 struct GroupListContainerViewPreview: PreviewProvider {
+    @State static var selectedSourceHolder = SelectionHolder(selectedTaskSource: .all)
     static var previews: some View {
         GroupListContainerView()
+            .environmentObject(selectedSourceHolder)
             .transformEnvironment(\.dataSource) {
                 $0.groups = .mockObjects(.init(
                     groups

@@ -75,12 +75,27 @@ extension EnvironmentValues {
     }
 
     var moveTask: @Sendable (WrappedID, WrappedID) async -> Void {
-        get { self[MoveTaskKey.self]}
-        set { self[MoveTaskKey.self] = newValue}
+        get { self[MoveTaskKey.self] }
+        set { self[MoveTaskKey.self] = newValue }
     }
 
     var updateMemo: @Sendable (TodoTask, TaskMemo?) async -> Void {
-        get {self[UpdateMemoKey.self]}
-        set { self[UpdateMemoKey.self] = newValue}
+        get { self[UpdateMemoKey.self] }
+        set { self[UpdateMemoKey.self] = newValue }
+    }
+}
+
+final class SelectionHolder: ObservableObject {
+    @Published var selectedTask: TodoTask?
+    @Published var selectedTaskSource: TaskSource?
+
+    init(selectedTask: TodoTask? = nil, selectedTaskSource: TaskSource? = nil) {
+        self.selectedTask = selectedTask
+        self.selectedTaskSource = selectedTaskSource
+    }
+
+    func backToRoot() {
+        selectedTask = nil
+        selectedTaskSource = nil
     }
 }
