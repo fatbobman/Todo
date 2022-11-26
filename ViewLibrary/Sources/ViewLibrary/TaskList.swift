@@ -60,7 +60,7 @@ public struct TaskListView: View {
                 }
             }
         }
-        .task {
+        .task { @MainActor in
             let (unCompletedRequest, completedRequest) = await getTodoListRequest(taskSource, taskSortType)
             if let unCompletedRequest {
                 $unCompletedTasks = unCompletedRequest

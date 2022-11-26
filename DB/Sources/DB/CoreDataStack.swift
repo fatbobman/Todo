@@ -232,4 +232,51 @@ extension CoreDataStack {
             return taskObject.eraseToAny()
         }
     }
+
+    @Sendable
+    func _getTodoListRequest(_ source: TaskSource, _ sortType: TaskSortType) async -> (unCompleted: NSFetchRequest<NSManagedObject>?, completed: NSFetchRequest<NSManagedObject>?) {
+        await viewContext.perform { [weak self] in
+            let sortDescriptions: [NSSortDescriptor]
+            switch sortType {
+            case .title:
+                sortDescriptions = [.init(key: #keyPath(C_Task.title), ascending: true)]
+            case .createDate:
+                sortDescriptions = [.init(key: #keyPath(C_Task.createDate), ascending: false)]
+            case .priority:
+                sortDescriptions = [.init(key: #keyPath(C_Task.priority), ascending: false)]
+            }
+
+            var completedPredicate: NSPredicate? = nil
+            var unCompletedPredicate: NSPredicate? = nil
+
+            switch source {
+            case .all:
+                completedPredicate = .init(format: "completed = YES")
+                unCompletedPredicate = .init(format: "completed = NO")
+            case .completed:
+                completedPredicate = .init(format: "completed = TRUE")
+                unCompletedPredicate = nil
+            case .myDay:
+                completedPredicate = .init(format: "completed = YES And myDay = YES")
+                unCompletedPredicate = .init(format: "completed = NO And myDay = YES")
+            case .list(let group):
+                guard case .objectID(let groupID) = group.id,
+                      let groupObject = try? self?.viewContext.existingObject(with: groupID) as? C_Group else {
+                    self?.logger.error("can't get group by \(group.id)")
+                    return (unCompleted: nil, completed: nil)
+                }
+                completedPredicate = .init(format: "completed = YES And group = %@", groupObject)
+                unCompletedPredicate = .init(format: "completed = NO And group = %@", groupObject)
+            case .moveableGroupList:
+                fatalError("The call to moveableGroupList should not occur")
+            }
+            let completedRequest = NSFetchRequest<NSManagedObject>(entityName: "C_Task")
+            completedRequest.predicate = completedPredicate
+            completedRequest.sortDescriptors = sortDescriptions
+            let unCompletedRequest = NSFetchRequest<NSManagedObject>(entityName: "C_Task")
+            unCompletedRequest.predicate = unCompletedPredicate
+            unCompletedRequest.sortDescriptors = sortDescriptions
+            return (unCompleted: unCompletedRequest, completed: completedRequest)
+        }
+    }
 }

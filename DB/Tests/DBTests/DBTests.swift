@@ -181,4 +181,27 @@ final class DBTests: XCTestCase {
         XCTAssertNotEqual(taskObject1.memo?.id, memoID)
         XCTAssertEqual(taskObject1.memo?.content, TaskMemo.sample2.content)
     }
+
+    func testGetGroupRequest() async throws {
+        let stack = CoreDataStack.test
+        await stack._createNewGroup(.sample1)
+        let groupFetch = C_Group.fetchRequest()
+        groupFetch.sortDescriptors = [.init(key: "title", ascending: true)]
+        let group = try stack.viewContext.fetch(groupFetch).first!
+        let groupValue = group.convertToValueType()
+        let task1 = TodoTask.sample1 // completed = false Date(timeIntervalSince1970: 0)
+        let task2 = TodoTask.sample2 // completed = false Date(timeIntervalSince1970: 1)
+        let task3 = TodoTask.sample3 // completed = true Date(timeIntervalSince1970: 2)
+        await stack._createNewTask(task1, groupValue)
+        await stack._createNewTask(task2, groupValue)
+        await stack._createNewTask(task3, groupValue)
+        let requests = await stack._getTodoListRequest(.list(groupValue), .createDate)
+        let completedTasks = try! stack.viewContext.fetch(requests.completed!)
+        let unCompletedTasks = try! stack.viewContext.fetch(requests.unCompleted!)
+        XCTAssertEqual(completedTasks.count, 1)
+        XCTAssertEqual(unCompletedTasks.count, 2)
+        XCTAssertEqual((completedTasks.first! as! C_Task).title, task3.title)
+        XCTAssertEqual((unCompletedTasks.first! as! C_Task).title, task2.title)
+        XCTAssertEqual((unCompletedTasks.last! as! C_Task).title, task1.title)
+    }
 }
