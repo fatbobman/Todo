@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:DB">
+   </FileRef>
+   <FileRef
       location = "group:Todo-PureSwiftUI/Todo-PureSwiftUI.xcodeproj">
    </FileRef>
    <FileRef
