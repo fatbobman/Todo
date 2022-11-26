@@ -2,9 +2,11 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21512" systemVersion="22A400" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="C_Group" representedClassName="C_Group" syncable="YES" codeGenerationType="class">
         <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="tasks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="C_Task" inverseName="group" inverseEntity="C_Task"/>
     </entity>
     <entity name="C_Memo" representedClassName="C_Memo" syncable="YES" codeGenerationType="class">
         <attribute name="content" optional="YES" attributeType="String"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="C_Task" inverseName="memo" inverseEntity="C_Task"/>
     </entity>
     <entity name="C_Task" representedClassName="C_Task" syncable="YES" codeGenerationType="class">
         <attribute name="completed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
@@ -12,5 +14,7 @@
         <attribute name="myDay" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="priority" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="group" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="C_Group" inverseName="tasks" inverseEntity="C_Group"/>
+        <relationship name="memo" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="C_Memo" inverseName="task" inverseEntity="C_Memo"/>
     </entity>
 </model>
