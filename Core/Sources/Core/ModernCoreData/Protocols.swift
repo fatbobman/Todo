@@ -129,7 +129,6 @@ public extension Equatable where Self: ConvertibleValueObservableObject {
 
 public class AnyConvertibleValueObservableObject<Value>: ObservableObject, Identifiable where Value: BaseValueProtocol {
     public var _object: any ConvertibleValueObservableObject<Value>
-    private var cancellable: AnyCancellable?
     public var id: WrappedID {
         _object.id
     }
@@ -140,12 +139,10 @@ public class AnyConvertibleValueObservableObject<Value>: ObservableObject, Ident
 
     init(object: some ConvertibleValueObservableObject<Value>) {
         self._object = object
-        cancellable = object
-            .objectWillChange
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-            self?.objectWillChange.send()
-        }
+    }
+
+    public var objectWillChange: ObjectWillChangePublisher {
+        _object.objectWillChange as! ObservableObjectPublisher
     }
 }
 

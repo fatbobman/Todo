@@ -13,11 +13,12 @@ import XCTest
 
 @MainActor
 final class AnyConvertibleValueObservableObjectTests: XCTestCase {
-    func testConvert() async throws {
+    func testToAny() async throws {
         let stack = CoreDataStack.test
+        let count = 10000
         await stack.container.performBackgroundTask { context in
             var objects: [NSManagedObject] = []
-            for _ in 0..<10000 {
+            for _ in 0..<count {
                 let group = C_Group(context: context)
                 group.title = UUID().uuidString
                 objects.append(group)
@@ -28,11 +29,37 @@ final class AnyConvertibleValueObservableObjectTests: XCTestCase {
         let request = C_Group.fetchRequest()
         request.sortDescriptors = [.init(key: "title", ascending: true)]
         let result = try stack.viewContext.fetch(request)
-        XCTAssertEqual(result.count, 10000)
+        XCTAssertEqual(result.count, count)
         var anyObject = [AnyConvertibleValueObservableObject<TodoGroup>]()
+        // average: 0.004
         measure {
             anyObject = result.map { $0.eraseToAny() }
             anyObject.removeAll()
+        }
+    }
+
+    func testToConvert() async throws {
+        let stack = CoreDataStack.test
+        let count = 10000
+        await stack.container.performBackgroundTask { context in
+            var objects: [NSManagedObject] = []
+            for _ in 0..<count {
+                let group = C_Group(context: context)
+                group.title = UUID().uuidString
+                objects.append(group)
+            }
+            try? context.save()
+        }
+
+        let request = C_Group.fetchRequest()
+        request.sortDescriptors = [.init(key: "title", ascending: true)]
+        let result = try stack.viewContext.fetch(request)
+        XCTAssertEqual(result.count, count)
+        var groups = [TodoGroup]()
+        // average: 0.015
+        measure {
+            groups = result.map { $0.convertToValueType() }
+            groups.removeAll()
         }
     }
 }
