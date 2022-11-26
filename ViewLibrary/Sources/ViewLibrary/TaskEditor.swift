@@ -15,21 +15,18 @@ public struct TaskEditorView: View {
     let updateTask: (TodoTask) -> Void
     let deleteTaskButtonTapped: (TodoTask) -> Void
     let editMemoButtonTapped: (TodoTask) -> Void
-    let dismissButtonTapped: () -> Void
     @FocusState var editTitle: Bool
 
     public init(
         task: TodoTask,
         updateTask: @escaping (TodoTask) -> Void,
         deleteTaskButtonTapped: @escaping (TodoTask) -> Void,
-        editMemoButtonTapped: @escaping (TodoTask) -> Void,
-        dismissButtonTapped: @escaping () -> Void
+        editMemoButtonTapped: @escaping (TodoTask) -> Void
     ) {
         self._task = State(wrappedValue: task)
         self.deleteTaskButtonTapped = deleteTaskButtonTapped
         self.updateTask = updateTask
         self.editMemoButtonTapped = editMemoButtonTapped
-        self.dismissButtonTapped = dismissButtonTapped
     }
 
     public var body: some View {
@@ -188,8 +185,7 @@ struct TaskEditorViewPreview: PreviewProvider {
                     }
                 },
                 deleteTaskButtonTapped: { _ in },
-                editMemoButtonTapped: { _ in },
-                dismissButtonTapped: {}
+                editMemoButtonTapped: { _ in }
             )
             .environment(\.getTaskObject) { _ in
                 previewTask

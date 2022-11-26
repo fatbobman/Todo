@@ -25,8 +25,7 @@ struct TaskEditorContainerView: View {
                 task: task,
                 updateTask: updateTask,
                 deleteTaskButtonTapped: deleteTaskButtonTapped,
-                editMemoButtonTapped: { editingMemoOfTask = $0 },
-                dismissButtonTapped: {}
+                editMemoButtonTapped: { editingMemoOfTask = $0 }
             )
             .alert(
                 "Delete Task",
