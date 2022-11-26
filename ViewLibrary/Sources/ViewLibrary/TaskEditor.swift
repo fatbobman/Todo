@@ -136,7 +136,7 @@ public struct TaskEditorView: View {
                 .animation(.easeInOut, value: editTitle)
             }
         }
-        .task {
+        .task { @MainActor in
             guard let taskObject = await getTaskObject(task) else { return }
             task = taskObject.wrappedValue
             for await _ in taskObject.objectWillChange.values {
