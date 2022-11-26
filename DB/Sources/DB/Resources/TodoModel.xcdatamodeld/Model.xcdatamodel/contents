@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21512" systemVersion="22A400" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="C_Group" representedClassName="C_Group" syncable="YES" codeGenerationType="class">
+        <attribute name="title" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="C_Memo" representedClassName="C_Memo" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="C_Task" representedClassName="C_Task" syncable="YES" codeGenerationType="class">
+        <attribute name="completed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="createDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="myDay" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="priority" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+    </entity>
+</model>
