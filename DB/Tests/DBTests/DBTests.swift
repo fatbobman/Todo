@@ -119,4 +119,15 @@ final class DBTests: XCTestCase {
         let newTask = try stack.viewContext.fetch(taskRequest).first!
         XCTAssertEqual(newTask.group?.id, todoGroup.id)
     }
+
+    func testGetTask() async throws {
+        let stack = CoreDataStack.test
+        let task = TodoTask.sample1
+        await stack._createNewTask(task, nil)
+        let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
+        taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
+        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let taskObject = await stack._getTaskObject(taskValue)
+        XCTAssertEqual(taskObject?.id, taskValue.id)
+    }
 }

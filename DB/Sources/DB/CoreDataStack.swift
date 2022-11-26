@@ -194,4 +194,42 @@ extension CoreDataStack {
             self?.save(context)
         }
     }
+
+    @Sendable
+    func _updateMemo(_ sourceTask: TodoTask, _ sourceMemo: TaskMemo?) async {
+        // 使用偷懒的方法解决 memo update 后的 Task 数据更新问题
+        // memo == nil ,删除
+        // memo != nil ,原来有替换，没有新增
+        await container.performBackgroundTask { [weak self] context in
+            guard case .objectID(let taskID) = sourceTask.id,
+                  let task = try? context.existingObject(with: taskID) as? C_Task else {
+                self?.logger.error("can't get task by \(sourceTask.id)")
+                return
+            }
+            if let sourceMemo {
+                if let memo = task.memo {
+                    context.delete(memo)
+                }
+                let newMemo = C_Memo(context: context)
+                newMemo.content = sourceMemo.content
+                newMemo.task = task
+            } else {
+                task.memo = nil
+            }
+            self?.save(context)
+        }
+    }
+
+    @Sendable
+    func _getTaskObject(_ task: TodoTask) async -> AnyConvertibleValueObservableObject<TodoTask>? {
+        return await MainActor.run { [weak self] in
+            let context = self?.viewContext
+            guard case .objectID(let id) = task.id,
+                  let taskObject = try? context?.existingObject(with: id) as? C_Task else {
+                self?.logger.error("can't get task by \(task.id)")
+                return nil
+            }
+            return taskObject.eraseToAny()
+        }
+    }
 }

@@ -13,6 +13,11 @@ import XCTest
 
 @MainActor
 final class AnyConvertibleValueObservableObjectTests: XCTestCase {
+    override func tearDown() async throws {
+        try await super.tearDown()
+        try await Task.sleep(for: .seconds(0.3))
+    }
+    
     func testToAny() async throws {
         let stack = CoreDataStack.test
         let count = 10000
