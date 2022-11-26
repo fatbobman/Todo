@@ -5,7 +5,6 @@ import XCTest
 
 @MainActor
 final class DBTests: XCTestCase {
-
     func testNewGroup() async throws {
         let stack = CoreDataStack.test
         let todoGroup = TodoGroup(id: .integer(0), title: "hello", taskCount: 0)
@@ -74,7 +73,7 @@ final class DBTests: XCTestCase {
         XCTAssertEqual(result.count, 1)
         let todoTask = result.first!
 
-        XCTAssertEqual(todoTask.title,task.title)
+        XCTAssertEqual(todoTask.title, task.title)
     }
 
     func testUpdateTask() async throws {
@@ -87,7 +86,7 @@ final class DBTests: XCTestCase {
         todoTask.title = "New"
         await stack._updateTask(todoTask)
         let newTask = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
-        XCTAssertEqual(newTask.id,todoTask.id)
+        XCTAssertEqual(newTask.id, todoTask.id)
         XCTAssertEqual(newTask.title, "New")
     }
 
@@ -129,5 +128,57 @@ final class DBTests: XCTestCase {
         let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
         let taskObject = await stack._getTaskObject(taskValue)
         XCTAssertEqual(taskObject?.id, taskValue.id)
+    }
+
+    func testUpdateMemoNew() async throws {
+        let stack = CoreDataStack.test
+        let task = TodoTask.sample1
+        await stack._createNewTask(task, nil)
+        let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
+        taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
+        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let memo = TaskMemo.sample1
+        await stack._updateMemo(taskValue, memo)
+        let taskObject = try stack.viewContext.fetch(taskRequest).first!
+        XCTAssertNotNil(taskObject.memo)
+        XCTAssertEqual(taskObject.memo?.content, memo.content)
+    }
+
+    func testUpdateMemoDelete() async throws {
+        let stack = CoreDataStack.test
+        let task = TodoTask.sample1
+        await stack._createNewTask(task, nil)
+        let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
+        taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
+        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let memo = TaskMemo.sample1
+        await stack._updateMemo(taskValue, memo)
+        let taskObject = try stack.viewContext.fetch(taskRequest).first!
+        XCTAssertNotNil(taskObject.memo)
+        XCTAssertEqual(taskObject.memo?.content, memo.content)
+        await stack._updateMemo(taskValue, nil)
+        let taskObject1 = try stack.viewContext.fetch(taskRequest).first!
+        XCTAssertNil(taskObject1.memo)
+    }
+
+    func testUpdateMemoReplace() async throws {
+        let stack = CoreDataStack.test
+        let task = TodoTask.sample1
+        await stack._createNewTask(task, nil)
+        let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
+        taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
+        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let memo = TaskMemo.sample1
+        await stack._updateMemo(taskValue, memo)
+        let taskObject = try stack.viewContext.fetch(taskRequest).first!
+        XCTAssertNotNil(taskObject.memo)
+        XCTAssertEqual(taskObject.memo?.content, memo.content)
+        let memoID = taskObject.memo!.id
+        let memo2 = TaskMemo.sample2
+        await stack._updateMemo(taskValue, memo2)
+        let taskObject1 = try stack.viewContext.fetch(taskRequest).first!
+        XCTAssertEqual(taskObject1, taskObject)
+        XCTAssertNotEqual(taskObject1.memo?.id, memoID)
+        XCTAssertEqual(taskObject1.memo?.content, TaskMemo.sample2.content)
     }
 }
