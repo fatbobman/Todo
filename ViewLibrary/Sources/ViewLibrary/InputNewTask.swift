@@ -30,13 +30,14 @@ public struct InputNewTaskView: View {
     }
 
     public var body: some View {
-        ZStack {
+        ZStack(alignment:.top) {
             HStack(spacing: 15) {
                 Button {
                     myDay.toggle()
                 } label: {
                     HStack {
                         Image(systemName: myDay ? "sun.max.fill" : "sun.max")
+                            .font(.title2)
                     }
                     .animation(.default, value: myDay)
                 }
@@ -57,14 +58,14 @@ public struct InputNewTaskView: View {
                 } label: {
                     Text("Done")
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.borderedProminent)
                 .controlSize(.small)
                 .disabled(!allowToSubmit)
             }
             .padding(.vertical, 8)
             .padding(.horizontal, 20)
         }
-        .background(Material.bar, ignoresSafeAreaEdges: .bottom)
+        .background(.regularMaterial.shadow(.drop(radius: 1)), ignoresSafeAreaEdges: .bottom)
     }
 
     func submit() {
