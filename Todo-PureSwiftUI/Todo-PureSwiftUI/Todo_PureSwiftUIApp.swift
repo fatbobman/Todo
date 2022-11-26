@@ -47,7 +47,7 @@ struct Todo_PureSwiftUIApp: App {
                         groups.remove(at: index)
                     }
                 }
-                .environment(\.taskCount, mockCountPublisher)
+                .environment(\.taskCount, mockCountStream)
                 .environment(\.deleteTask) { task in
                     await MainActor.run {
                         guard let index = dataSource.tasks.firstIndex(where: { $0.id == task.id }) else { return }

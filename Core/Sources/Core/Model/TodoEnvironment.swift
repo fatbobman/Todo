@@ -10,12 +10,12 @@ import CoreData
 import Foundation
 import SwiftUI
 
-public enum TaskSortType: String,Equatable,CaseIterable,Identifiable {
+public enum TaskSortType: String, Equatable, CaseIterable, Identifiable {
     case title = "Title"
     case createDate = "Create Date"
     case priority = "Priority"
 
-    public var id:Self {
+    public var id: Self {
         self
     }
 }
@@ -53,7 +53,7 @@ public struct GetTaskObjectKey: EnvironmentKey {
 }
 
 public struct TaskCountKey: EnvironmentKey {
-    public static var defaultValue: @Sendable (TaskSource) async -> AsyncPublisher<AnyPublisher<Int, Never>> = { taskSource in
+    public static var defaultValue: @Sendable (TaskSource) async -> AsyncStream<Int> = { taskSource in
         var result = 0
         switch taskSource {
         case .completed:
@@ -65,7 +65,9 @@ public struct TaskCountKey: EnvironmentKey {
         default:
             fatalError("only support 'all','myDay' and 'finished'")
         }
-        return AnyPublisher(CurrentValueSubject<Int, Never>(result)).values
+        return AsyncStream<Int> { c in
+            c.yield(result)
+        }
     }
 }
 
@@ -90,7 +92,7 @@ public extension EnvironmentValues {
         set { self[MovableGroupListRequestKey.self] = newValue }
     }
 
-    var taskCount: @Sendable (TaskSource) async -> AsyncPublisher<AnyPublisher<Int, Never>> {
+    var taskCount: @Sendable (TaskSource) async -> AsyncStream<Int> {
         get { self[TaskCountKey.self] }
         set { self[TaskCountKey.self] = newValue }
     }

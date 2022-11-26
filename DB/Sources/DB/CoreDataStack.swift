@@ -5,6 +5,7 @@
 //  Created by Yang Xu on 2022/11/26.
 //
 
+import Combine
 import Core
 import CoreData
 import Foundation
@@ -126,10 +127,13 @@ extension CoreDataStack {
     }
 
     @Sendable
-    func _createNewTask(_ sourceTask: TodoTask, _ sourceGroup: TodoGroup?) async {
+    func _createNewTask(_ sourceTask: TodoTask, _ taskSource: TaskSource) async {
         await container.performBackgroundTask { [weak self] context in
             var group: C_Group?
-            if let sourceGroup {
+            switch taskSource {
+            case .all, .completed, .myDay, .moveableGroupList:
+                break
+            case .list(let sourceGroup):
                 if case .objectID(let groupID) = sourceGroup.id,
                    let tempGroup = try? context.existingObject(with: groupID) as? C_Group {
                     group = tempGroup
@@ -138,6 +142,7 @@ extension CoreDataStack {
                     return
                 }
             }
+
             let task = C_Task(context: context)
             task.title = sourceTask.title
             task.createDate = .now
@@ -178,16 +183,16 @@ extension CoreDataStack {
     }
 
     @Sendable
-    func _moveTask(_ sourceTask: TodoTask, _ sourceGroup: TodoGroup) async {
+    func _moveTask(_ sourceTaskID: WrappedID, _ sourceGroupID: WrappedID) async {
         await container.performBackgroundTask { [weak self] context in
-            guard case .objectID(let taskID) = sourceTask.id,
+            guard case .objectID(let taskID) = sourceTaskID,
                   let task = try? context.existingObject(with: taskID) as? C_Task else {
-                self?.logger.error("can't get task by \(sourceTask.id)")
+                self?.logger.error("can't get task by \(sourceTaskID)")
                 return
             }
-            guard case .objectID(let groupID) = sourceGroup.id,
+            guard case .objectID(let groupID) = sourceGroupID,
                   let group = try? context.existingObject(with: groupID) as? C_Group else {
-                self?.logger.error("can't get group by \(sourceGroup.id)")
+                self?.logger.error("can't get group by \(sourceGroupID)")
                 return
             }
             task.group = group
@@ -303,5 +308,96 @@ extension CoreDataStack {
             }
             return request
         }
+    }
+
+    @Sendable
+    func _taskCount(_ source: TaskSource) async -> AsyncStream<Int> {
+        let request = NSFetchRequest<NSNumber>(entityName: "C_Task")
+        request.sortDescriptors = [.init(key: "title", ascending: true)]
+        request.resultType = .countResultType
+        switch source {
+        case .all:
+            request.predicate = nil
+        case .myDay:
+            request.predicate = NSPredicate(format: "myDay = YES")
+        case .completed:
+            request.predicate = NSPredicate(format: "completed = YES")
+        default:
+            fatalError("Only all, Day, completed can generate count publisher")
+        }
+
+        let bgContext = self.container.newBackgroundContext()
+
+        let countStream: AsyncStream<Int> = AsyncStream { continuation in
+            Task {
+                let count = await bgContext.perform {
+                    (try? bgContext.fetch(request).first)?.intValue ?? 0
+                }
+                continuation.yield(count)
+                for await _ in NotificationCenter.default.publisher(for: .taskDidSave).values where !Task.isCancelled {
+                    let count = await bgContext.perform {
+                        (try? bgContext.fetch(request).first)?.intValue ?? 0
+                    }
+                    continuation.yield(count)
+                }
+            }
+        }
+
+        return countStream
+    }
+}
+
+extension CoreDataStack: DBAPI {
+    public var createNewTask: @Sendable (Core.TodoTask, Core.TaskSource) async -> Void {
+        _createNewTask
+    }
+
+    public var getTodoListRequest: @Sendable (Core.TaskSource, Core.TaskSortType) async ->
+        (unCompleted: NSFetchRequest<NSManagedObject>?, completed: NSFetchRequest<NSManagedObject>?) {
+        _getTodoListRequest
+    }
+
+    public var getTodoGroupRequest: @Sendable () async -> NSFetchRequest<NSManagedObject>? {
+        _getTodoGroupRequest
+    }
+
+    public var getMovableGroupListRequest: @Sendable (Core.TodoTask) async -> NSFetchRequest<NSManagedObject>? {
+        _getMovableGroupListRequest
+    }
+
+    public var getTaskObject: @Sendable (Core.TodoTask) async -> Core.AnyConvertibleValueObservableObject<Core.TodoTask>? {
+        _getTaskObject
+    }
+
+    public var taskCount: @Sendable (Core.TaskSource) async -> AsyncStream<Int> {
+        _taskCount
+    }
+
+    public var createNewGroup: @Sendable (Core.TodoGroup) async -> Void {
+        _createNewGroup
+    }
+
+    public var updateGroup: @Sendable (Core.TodoGroup) async -> Void {
+        _updateGroup
+    }
+
+    public var deleteGroup: @Sendable (Core.TodoGroup) async -> Void {
+        _deleteGroup
+    }
+
+    public var updateTask: @Sendable (Core.TodoTask) async -> Void {
+        _updateTask
+    }
+
+    public var deleteTask: @Sendable (Core.TodoTask) async -> Void {
+        _deleteTask
+    }
+
+    public var moveTask: @Sendable (WrappedID, WrappedID) async -> Void {
+        _moveTask
+    }
+
+    public var updateMemo: @Sendable (Core.TodoTask, Core.TaskMemo?) async -> Void {
+        _updateMemo
     }
 }

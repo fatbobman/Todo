@@ -23,7 +23,7 @@ public protocol DBAPI {
     var getTaskObject: @Sendable (TodoTask) async -> AnyConvertibleValueObservableObject<TodoTask>? { get }
 
     /// 跟踪 Group 中 task 数量的 AsyncPublisher
-    var taskCount: @Sendable (TaskSource) async -> AsyncPublisher<AnyPublisher<Int, Never>> { get }
+    var taskCount: @Sendable (TaskSource) async -> AsyncStream<Int> { get }
 
     /// 新建 Group
     var createNewGroup: @Sendable (TodoGroup) async -> Void { get }

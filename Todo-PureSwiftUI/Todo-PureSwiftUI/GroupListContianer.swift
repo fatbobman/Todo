@@ -123,17 +123,24 @@ struct GroupListContainerViewPreview: PreviewProvider {
                 guard let index = groups.firstIndex(where: { $0.id == group.id }) else { return }
                 groups.remove(at: index)
             }
-            .environment(\.taskCount, mockCountPublisher)
+            .environment(\.taskCount, mockCountStream)
     }
 }
 
 import Combine
 @Sendable
-func mockCountPublisher(taskSource: TaskSource) async -> AsyncPublisher<AnyPublisher<Int, Never>> {
-    Timer.TimerPublisher(interval: 1, runLoop: .main, mode: .default).autoconnect()
-        .map { _ in Int.random(in: 10...20) }
-        .prepend(Int.random(in: 1...4))
-        .eraseToAnyPublisher()
-        .values
+func mockCountStream(taskSource: TaskSource) async -> AsyncStream<Int> {
+    AsyncStream<Int> { c in
+        Task {
+            let publiser = Timer.publish(every: 2, on: .main, in: .default)
+                .autoconnect()
+                .map { _ in Int.random(in: 0...20) }
+                .prepend(3)
+
+            for await _ in publiser.values where !Task.isCancelled {
+                c.yield(Int.random(in: 3...15))
+            }
+        }
+    }
 }
 #endif
