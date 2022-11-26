@@ -204,4 +204,37 @@ final class DBTests: XCTestCase {
         XCTAssertEqual((unCompletedTasks.first! as! C_Task).title, task2.title)
         XCTAssertEqual((unCompletedTasks.last! as! C_Task).title, task1.title)
     }
+
+    func testGetGroupListRequest() async throws {
+        let stack = CoreDataStack.test
+        await stack._createNewGroup(.sample1) // title Group1
+        await stack._createNewGroup(.sample2) // title Group2
+        let request = await stack._getTodoGroupRequest()
+        let groups = try! stack.viewContext.fetch(request!)
+        XCTAssertEqual((groups.first! as! C_Group).title, TodoGroup.sample1.title)
+        XCTAssertEqual((groups.last! as! C_Group).title, TodoGroup.sample2.title)
+    }
+
+    func testGetMovableGroupListRequest() async throws {
+        let stack = CoreDataStack.test
+        await stack._createNewGroup(.sample1) // title Group1
+        await stack._createNewGroup(.sample2) // title Group2
+        let group1Request = NSFetchRequest<C_Group>(entityName: "C_Group")
+        group1Request.predicate = .init(format: "title = %@", TodoGroup.sample1.title)
+        group1Request.sortDescriptors = [.init(key: "title", ascending: true)]
+        let groups = try! stack.viewContext.fetch(group1Request)
+        XCTAssertEqual(groups.count, 1)
+        let group1Object = groups.first!
+        XCTAssertEqual(group1Object.title, TodoGroup.sample1.title)
+        let group1 = group1Object.convertToValueType()
+        await stack._createNewTask(.sample1, group1)
+        let requestForTask = C_Task.fetchRequest()
+        requestForTask.sortDescriptors = [.init(key: "title", ascending: true)]
+        let tasks = try! stack.viewContext.fetch(requestForTask)
+        XCTAssertEqual(tasks.count, 1)
+        let movableRequestForTaskSample1 = await stack._getMovableGroupListRequest(tasks.first!.convertToValueType())
+        let movableGroups = try! stack.viewContext.fetch(movableRequestForTaskSample1!)
+        XCTAssertEqual(movableGroups.count, 1)
+        XCTAssertEqual((movableGroups.first! as! C_Group).title, TodoGroup.sample2.title)
+    }
 }

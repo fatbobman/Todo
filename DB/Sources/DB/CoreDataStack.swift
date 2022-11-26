@@ -246,8 +246,8 @@ extension CoreDataStack {
                 sortDescriptions = [.init(key: #keyPath(C_Task.priority), ascending: false)]
             }
 
-            var completedPredicate: NSPredicate? = nil
-            var unCompletedPredicate: NSPredicate? = nil
+            var completedPredicate: NSPredicate?
+            var unCompletedPredicate: NSPredicate?
 
             switch source {
             case .all:
@@ -277,6 +277,31 @@ extension CoreDataStack {
             unCompletedRequest.predicate = unCompletedPredicate
             unCompletedRequest.sortDescriptors = sortDescriptions
             return (unCompleted: unCompletedRequest, completed: completedRequest)
+        }
+    }
+
+    @Sendable
+    func _getTodoGroupRequest() async -> NSFetchRequest<NSManagedObject>? {
+        let request = NSFetchRequest<NSManagedObject>(entityName: "C_Group")
+        request.sortDescriptors = [.init(key: "title", ascending: true)]
+        return request
+    }
+
+    @Sendable
+    func _getMovableGroupListRequest(_ task: TodoTask) async -> NSFetchRequest<NSManagedObject>? {
+        await viewContext.perform { [weak self] in
+            guard case .objectID(let taskID) = task.id,
+                  let taskObject = try? self?.viewContext.existingObject(with: taskID) as? C_Task else {
+                self?.logger.debug("can't get movable group list by \(task.id)")
+                return nil
+            }
+
+            let request = NSFetchRequest<NSManagedObject>(entityName: "C_Group")
+            request.sortDescriptors = [.init(key: "title", ascending: true)]
+            if let groupObject = taskObject.group {
+                request.predicate = NSPredicate(format: "self != %@", groupObject)
+            }
+            return request
         }
     }
 }
