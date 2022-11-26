@@ -13,6 +13,7 @@ import ViewLibrary
 struct TaskEditorContainerView: View {
     @Environment(\.deleteTask) private var deleteTaskEnv
     @Environment(\.updateTask) private var updateTaskEnv
+    // 当前只有与 NavigationStack 最近的 navigationDestination 可以使用程序化的手段进行撤销，其他层级的仍需通过 dismiss 来转接
     @Environment(\.dismiss) private var dismiss
     @Environment(\.updateMemo) private var updateMemoEnv
     @EnvironmentObject private var holder: SelectionHolder
@@ -75,3 +76,23 @@ struct TaskEditorContainerView: View {
         }
     }
 }
+
+#if DEBUG
+
+struct TaskEditorContainerViewPreviewRoot: View {
+    @StateObject var dataSource = ListContainerDataSource()
+    @StateObject var holder = SelectionHolder(selectedTask: .sample2)
+    @State var id = UUID()
+    var body: some View {
+        TaskEditorContainerView()
+            .environmentObject(holder)
+    }
+}
+
+struct TaskEditorContainerViewPreview: PreviewProvider {
+    static var previews: some View {
+        TaskEditorContainerViewPreviewRoot()
+    }
+}
+
+#endif
