@@ -241,6 +241,9 @@ extension CoreDataStack {
     @Sendable
     func _getTodoListRequest(_ source: TaskSource, _ sortType: TaskSortType) async -> (unCompleted: NSFetchRequest<NSManagedObject>?, completed: NSFetchRequest<NSManagedObject>?) {
         await viewContext.perform { [weak self] in
+            let completedRequest: NSFetchRequest<NSManagedObject>?
+            let unCompletedRequest: NSFetchRequest<NSManagedObject>?
+
             let sortDescriptions: [NSSortDescriptor]
             switch sortType {
             case .title:
@@ -275,12 +278,20 @@ extension CoreDataStack {
             case .moveableGroupList:
                 fatalError("The call to moveableGroupList should not occur")
             }
-            let completedRequest = NSFetchRequest<NSManagedObject>(entityName: "C_Task")
-            completedRequest.predicate = completedPredicate
-            completedRequest.sortDescriptors = sortDescriptions
-            let unCompletedRequest = NSFetchRequest<NSManagedObject>(entityName: "C_Task")
-            unCompletedRequest.predicate = unCompletedPredicate
-            unCompletedRequest.sortDescriptors = sortDescriptions
+
+            completedRequest = NSFetchRequest<NSManagedObject>(entityName: "C_Task")
+            unCompletedRequest = NSFetchRequest<NSManagedObject>(entityName: "C_Task")
+
+            completedRequest?.predicate = completedPredicate
+            completedRequest?.sortDescriptors = sortDescriptions
+
+            unCompletedRequest?.sortDescriptors = sortDescriptions
+            if source != .completed {
+                unCompletedRequest?.predicate = unCompletedPredicate
+            } else {
+                // 不获取任何数据
+                unCompletedRequest?.predicate = NSPredicate(value: false)
+            }
             return (unCompleted: unCompletedRequest, completed: completedRequest)
         }
     }
