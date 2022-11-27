@@ -18,7 +18,7 @@ struct TaskListContainerView: View {
 
     @State private var taskToBeDeleted: TodoTask?
     @State private var taskToBeMoved: TodoTask?
-    @State private var sortType: TaskSortType = .title
+    @AppStorage("TodoListSortType") private var sortType: TaskSortType = .title
     @EnvironmentObject private var holder: SelectionHolder
 
     var body: some View {
