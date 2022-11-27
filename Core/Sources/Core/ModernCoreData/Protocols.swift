@@ -146,6 +146,12 @@ public class AnyConvertibleValueObservableObject<Value>: ObservableObject, Ident
     }
 }
 
+extension AnyConvertibleValueObservableObject: Equatable {
+    public static func == (lhs: AnyConvertibleValueObservableObject<Value>, rhs: AnyConvertibleValueObservableObject<Value>) -> Bool {
+        lhs._object.isEquatable(other: rhs._object)
+    }
+}
+
 public extension ConvertibleValueObservableObject {
     func eraseToAny() -> AnyConvertibleValueObservableObject<Value> {
         AnyConvertibleValueObservableObject(object: self)
