@@ -26,7 +26,7 @@ struct Todo_PureSwiftUIApp: App {
                 .environment(\.updateTask, stack.updateTask)
                 .environment(\.deleteTask, stack.deleteTask)
                 .environment(\.moveTask, stack.moveTask)
-//                .environment(\.updateMemo, stack.updateMemo)
+                .environment(\.updateMemo, stack.updateMemo)
                 .environment(\.getTodoListRequest, stack.getTodoListRequest)
                 .environment(\.getTodoGroupRequest, stack.getTodoGroupRequest)
                 .environment(\.getTaskObject, stack.getTaskObject)
