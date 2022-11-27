@@ -15,19 +15,19 @@ public struct MockableFetchRequest<Value>: DynamicProperty where Value: BaseValu
     @Environment(\.managedObjectContext) var viewContext
     @Environment(\.dataSource) var dataSource
 
-    @State var equableObjects: EquatableObjects<Value>?
+    @State var values: [AnyConvertibleValueObservableObject<Value>] = []
     public var wrappedValue: [AnyConvertibleValueObservableObject<Value>] {
-        equableObjects?.values ?? []
+        values
     }
 
     let objectKeyPath: KeyPath<ObjectsDataSource, FetchDataSource<Value>>
     let animation: Animation?
     let fetchRequest: NSFetchRequest<NSManagedObject>?
-    @State var updateWrappedValue = MutableHolder<(EquatableObjects<Value>) -> Void>({ _ in })
+    @State var updateWrappedValue = MutableHolder<([AnyConvertibleValueObservableObject<Value>]) -> Void>({ _ in })
     @State var firstUpdate = MutableHolder<Bool>(true)
     @State var fetcher = MutableHolder<ConvertibleValueObservableObjectFetcher<Value>?>(nil)
     @State var cancellable = MutableHolder<AnyCancellable?>(nil)
-    @State var sender = PassthroughSubject<EquatableObjects<Value>, Never>()
+    @State var sender = PassthroughSubject<[AnyConvertibleValueObservableObject<Value>], Never>()
 
     public init(
         _ objectKeyPath: KeyPath<ObjectsDataSource, FetchDataSource<Value>>,
@@ -41,7 +41,7 @@ public struct MockableFetchRequest<Value>: DynamicProperty where Value: BaseValu
 
     public func update() {
         // set updateWrappedValue
-        let values = _equableObjects
+        let values = _values
         let firstUpdate = firstUpdate
         let animation = animation
         updateWrappedValue.value = { data in
@@ -73,8 +73,8 @@ public struct MockableFetchRequest<Value>: DynamicProperty where Value: BaseValu
         }
 
         // mock objects
-        if case .mockObjects(let objects) = dataSource[keyPath: objectKeyPath], objects != equableObjects {
-            sender.send(objects)
+        if case .mockObjects(let objects) = dataSource[keyPath: objectKeyPath], objects != EquatableObjects(_values.wrappedValue) {
+            sender.send(objects.values)
         }
     }
 
@@ -106,11 +106,11 @@ extension MockableFetchRequest {
 
 final class ConvertibleValueObservableObjectFetcher<Value>: NSObject, NSFetchedResultsControllerDelegate where Value: BaseValueProtocol {
     var fetcher: NSFetchedResultsController<NSManagedObject>?
-    let sender: PassthroughSubject<EquatableObjects<Value>, Never>
+    let sender: PassthroughSubject<[AnyConvertibleValueObservableObject<Value>], Never>
 
     func updateRequest(context: NSManagedObjectContext, request: NSFetchRequest<NSManagedObject>) {
         precondition(context.concurrencyType == .mainQueueConcurrencyType, "只支持类型为 main Queue 的托管对象上下文")
-        fetcher = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        fetcher = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: "title", cacheName: nil)
         fetcher?.delegate = self
         do {
             try fetcher?.performFetch()
@@ -120,7 +120,7 @@ final class ConvertibleValueObservableObjectFetcher<Value>: NSObject, NSFetchedR
         publishValue(fetcher?.fetchedObjects)
     }
 
-    init(sender: PassthroughSubject<EquatableObjects<Value>, Never>) {
+    init(sender: PassthroughSubject<[AnyConvertibleValueObservableObject<Value>], Never>) {
         self.sender = sender
     }
 
@@ -129,7 +129,7 @@ final class ConvertibleValueObservableObjectFetcher<Value>: NSObject, NSFetchedR
         let results = values.compactMap {
             ($0 as? any ConvertibleValueObservableObject<Value>)?.eraseToAny()
         }
-        sender.send(.init(results))
+        sender.send(results)
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
