@@ -247,11 +247,23 @@ extension CoreDataStack {
             let sortDescriptions: [NSSortDescriptor]
             switch sortType {
             case .title:
-                sortDescriptions = [.init(key: #keyPath(C_Task.title), ascending: true)]
+                sortDescriptions = [
+                    .init(key: #keyPath(C_Task.title), ascending: true),
+                    .init(key: #keyPath(C_Task.createDate), ascending: false),
+                    .init(key: #keyPath(C_Task.priority), ascending: false),
+                ]
             case .createDate:
-                sortDescriptions = [.init(key: #keyPath(C_Task.createDate), ascending: false)]
+                sortDescriptions = [
+                    .init(key: #keyPath(C_Task.createDate), ascending: false),
+                    .init(key: #keyPath(C_Task.title), ascending: true),
+                    .init(key: #keyPath(C_Task.priority), ascending: false),
+                ]
             case .priority:
-                sortDescriptions = [.init(key: #keyPath(C_Task.priority), ascending: false)]
+                sortDescriptions = [
+                    .init(key: #keyPath(C_Task.priority), ascending: false),
+                    .init(key: #keyPath(C_Task.title), ascending: true),
+                    .init(key: #keyPath(C_Task.createDate), ascending: false)
+                ]
             }
 
             var completedPredicate: NSPredicate?
