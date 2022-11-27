@@ -60,7 +60,7 @@ public struct TaskListView: View {
                 }
             }
         }
-        .task(id:taskSortType) { @MainActor in
+        .task(id: taskSortType) { @MainActor in
             let (unCompletedRequest, completedRequest) = await getTodoListRequest(taskSource, taskSortType)
             if let unCompletedRequest {
                 $unCompletedTasks = unCompletedRequest
@@ -84,7 +84,7 @@ struct TaskListViewPreview: PreviewProvider {
                 moveTaskButtonTapped: { _ in },
                 taskCellTapped: { _ in }
             )
-            .toolbar{
+            .toolbar {
                 ToolbarItem {
                     TaskSortButton(taskSortType: .constant(.createDate))
                 }
