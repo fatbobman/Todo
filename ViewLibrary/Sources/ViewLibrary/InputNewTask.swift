@@ -30,7 +30,7 @@ public struct InputNewTaskView: View {
     }
 
     public var body: some View {
-        ZStack(alignment:.top) {
+        ZStack(alignment: .top) {
             HStack(spacing: 15) {
                 Button {
                     myDay.toggle()
@@ -77,9 +77,14 @@ public struct InputNewTaskView: View {
             completed: false,
             myDay: myDay
         )
-        createNewTask(task, taskSource)
+
         taskText = ""
         editing = false
+
+        // 避免 List 与 键盘同时动画，改善因 safeArea 导致的列表地步刷新问题
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.32) {
+            createNewTask(task, taskSource)
+        }
     }
 
     var allowToSubmit: Bool {
