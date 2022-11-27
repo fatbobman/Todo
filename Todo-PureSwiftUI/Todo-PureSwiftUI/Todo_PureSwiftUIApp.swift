@@ -20,8 +20,8 @@ struct Todo_PureSwiftUIApp: App {
                 .environmentObject(selectionHolder) // keep
                 .environment(\.managedObjectContext, stack.viewContext)
                 .environment(\.createNewGroup, stack.createNewGroup)
-//                .environment(\.updateGroup, stack.updateGroup)
-//                .environment(\.deleteGroup, stack.deleteGroup)
+                .environment(\.updateGroup, stack.updateGroup)
+                .environment(\.deleteGroup, stack.deleteGroup)
 //                .environment(\.createNewTask, stack.createNewTask)
 //                .environment(\.updateTask, stack.updateTask)
 //                .environment(\.deleteTask, stack.deleteTask)

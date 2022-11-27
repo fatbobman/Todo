@@ -53,7 +53,7 @@ struct GroupListContainerView: View {
                 isPresented: .isPresented($groupToBeDeleted),
                 actions: {
                     Button("Confirm", role: .destructive) {
-                        performDeleteGroup()
+                        performDeleteGroup(groupToBeDeleted)
                     }
                     Button("Cancel", role: .cancel) {}
                 },
@@ -85,10 +85,10 @@ struct GroupListContainerView: View {
         Task { await updateGroupEnv(group) }
     }
 
-    private func performDeleteGroup() {
+    private func performDeleteGroup(_ group: TodoGroup?) {
         Task {
-            if let groupToBeDeleted {
-                await deleteGroupEnv(groupToBeDeleted)
+            if let group {
+                await deleteGroupEnv(group)
             }
         }
     }
