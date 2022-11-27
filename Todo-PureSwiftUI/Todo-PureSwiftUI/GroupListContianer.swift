@@ -37,9 +37,15 @@ struct GroupListContainerView: View {
                 isPresented: .isPresented($groupEditMode)
             ) {
                 if case .edit(let group) = groupEditMode {
-                    ModifierGroupView(group: group, perform: performUpdateGroup)
+                    ModifierGroupView(
+                        group: group,
+                        perform: performUpdateGroup
+                    )
                 } else {
-                    ModifierGroupView(group: nil, perform: performUpdateGroup)
+                    ModifierGroupView(
+                        group: nil,
+                        perform: performCreateNewGroup
+                    )
                 }
             }
             .alert(
@@ -85,6 +91,11 @@ struct GroupListContainerView: View {
                 await deleteGroupEnv(groupToBeDeleted)
             }
         }
+    }
+
+    private func performCreateNewGroup(group: TodoGroup) {
+        guard !group.title.isEmpty else { return }
+        Task { await createNewGroupEnv(group) }
     }
 
     enum EditMode: Equatable {

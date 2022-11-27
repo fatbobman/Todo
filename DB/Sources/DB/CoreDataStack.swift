@@ -41,7 +41,7 @@ public final class CoreDataStack {
     let inMemory: Bool
     let logger = Logger()
 
-    var viewContext: NSManagedObjectContext {
+    public var viewContext: NSManagedObjectContext {
         container.viewContext
     }
 

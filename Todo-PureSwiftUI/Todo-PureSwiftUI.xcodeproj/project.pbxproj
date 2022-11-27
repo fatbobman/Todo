@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		76555F032932DF1A00417AA1 /* DB in Frameworks */ = {isa = PBXBuildFile; productRef = 76555F022932DF1A00417AA1 /* DB */; };
 		76DBA6E52930A37700E1352A /* Todo_PureSwiftUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76DBA6E42930A37700E1352A /* Todo_PureSwiftUIApp.swift */; };
 		76DBA6E92930A37800E1352A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76DBA6E82930A37800E1352A /* Assets.xcassets */; };
 		76DBA6EC2930A37800E1352A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76DBA6EB2930A37800E1352A /* Preview Assets.xcassets */; };
@@ -36,6 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76555F032932DF1A00417AA1 /* DB in Frameworks */,
 				76DBA7002930A3E600E1352A /* Core in Frameworks */,
 				76DBA7022930A3E600E1352A /* ViewLibrary in Frameworks */,
 			);
@@ -110,6 +112,7 @@
 			packageProductDependencies = (
 				76DBA6FF2930A3E600E1352A /* Core */,
 				76DBA7012930A3E600E1352A /* ViewLibrary */,
+				76555F022932DF1A00417AA1 /* DB */,
 			);
 			productName = "Todo-PureSwiftUI";
 			productReference = 76DBA6E12930A37700E1352A /* Todo-PureSwiftUI.app */;
@@ -373,6 +376,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		76555F022932DF1A00417AA1 /* DB */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DB;
+		};
 		76DBA6FF2930A3E600E1352A /* Core */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Core;
