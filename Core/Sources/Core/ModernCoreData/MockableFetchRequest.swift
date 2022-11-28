@@ -110,7 +110,7 @@ final class ConvertibleValueObservableObjectFetcher<Value>: NSObject, NSFetchedR
 
     func updateRequest(context: NSManagedObjectContext, request: NSFetchRequest<NSManagedObject>) {
         precondition(context.concurrencyType == .mainQueueConcurrencyType, "只支持类型为 main Queue 的托管对象上下文")
-        fetcher = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: "title", cacheName: nil)
+        fetcher = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
         fetcher?.delegate = self
         do {
             try fetcher?.performFetch()
