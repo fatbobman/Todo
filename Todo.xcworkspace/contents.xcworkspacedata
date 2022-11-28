@@ -5,18 +5,18 @@
       location = "group:Features">
    </FileRef>
    <FileRef
-      location = "group:Todo-TCA/Todo-TCA.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:DB">
-   </FileRef>
-   <FileRef
-      location = "group:Todo-PureSwiftUI/Todo-PureSwiftUI.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Core">
    </FileRef>
    <FileRef
       location = "group:ViewLibrary">
+   </FileRef>
+   <FileRef
+      location = "group:Todo-PureSwiftUI/Todo-PureSwiftUI.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Todo-TCA/Todo-TCA.xcodeproj">
    </FileRef>
 </Workspace>
