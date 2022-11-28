@@ -11,6 +11,10 @@
 		76555F3429345D8B00417AA1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76555F3329345D8B00417AA1 /* ContentView.swift */; };
 		76555F3629345D8C00417AA1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76555F3529345D8C00417AA1 /* Assets.xcassets */; };
 		76555F3929345D8C00417AA1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76555F3829345D8C00417AA1 /* Preview Assets.xcassets */; };
+		76555F4229345F5D00417AA1 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 76555F4129345F5D00417AA1 /* Core */; };
+		76555F4429345F5D00417AA1 /* DB in Frameworks */ = {isa = PBXBuildFile; productRef = 76555F4329345F5D00417AA1 /* DB */; };
+		76555F4629345F5D00417AA1 /* Features in Frameworks */ = {isa = PBXBuildFile; productRef = 76555F4529345F5D00417AA1 /* Features */; };
+		76555F4829345F5D00417AA1 /* ViewLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 76555F4729345F5D00417AA1 /* ViewLibrary */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +30,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76555F4629345F5D00417AA1 /* Features in Frameworks */,
+				76555F4429345F5D00417AA1 /* DB in Frameworks */,
+				76555F4229345F5D00417AA1 /* Core in Frameworks */,
+				76555F4829345F5D00417AA1 /* ViewLibrary in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -37,6 +45,7 @@
 			children = (
 				76555F3029345D8B00417AA1 /* Todo-TCA */,
 				76555F2F29345D8B00417AA1 /* Products */,
+				76555F4029345F5D00417AA1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -67,6 +76,13 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		76555F4029345F5D00417AA1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -83,6 +99,12 @@
 			dependencies = (
 			);
 			name = "Todo-TCA";
+			packageProductDependencies = (
+				76555F4129345F5D00417AA1 /* Core */,
+				76555F4329345F5D00417AA1 /* DB */,
+				76555F4529345F5D00417AA1 /* Features */,
+				76555F4729345F5D00417AA1 /* ViewLibrary */,
+			);
 			productName = "Todo-TCA";
 			productReference = 76555F2E29345D8B00417AA1 /* Todo-TCA.app */;
 			productType = "com.apple.product-type.application";
@@ -339,6 +361,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		76555F4129345F5D00417AA1 /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Core;
+		};
+		76555F4329345F5D00417AA1 /* DB */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DB;
+		};
+		76555F4529345F5D00417AA1 /* Features */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Features;
+		};
+		76555F4729345F5D00417AA1 /* ViewLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ViewLibrary;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 76555F2629345D8B00417AA1 /* Project object */;
 }
