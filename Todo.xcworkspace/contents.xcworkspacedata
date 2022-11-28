@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Todo-TCA/Todo-TCA.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:DB">
    </FileRef>
    <FileRef

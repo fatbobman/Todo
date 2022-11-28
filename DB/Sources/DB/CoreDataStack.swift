@@ -250,19 +250,19 @@ extension CoreDataStack {
                 sortDescriptions = [
                     .init(key: #keyPath(C_Task.title), ascending: true),
                     .init(key: #keyPath(C_Task.createDate), ascending: false),
-                    .init(key: #keyPath(C_Task.priority), ascending: false),
+                    .init(key: #keyPath(C_Task.priority), ascending: false)
                 ]
             case .createDate:
                 sortDescriptions = [
                     .init(key: #keyPath(C_Task.createDate), ascending: false),
                     .init(key: #keyPath(C_Task.title), ascending: true),
-                    .init(key: #keyPath(C_Task.priority), ascending: false),
+                    .init(key: #keyPath(C_Task.priority), ascending: false)
                 ]
             case .priority:
                 sortDescriptions = [
                     .init(key: #keyPath(C_Task.priority), ascending: false),
-                    .init(key: #keyPath(C_Task.title), ascending: true),
-                    .init(key: #keyPath(C_Task.createDate), ascending: false)
+                    .init(key: #keyPath(C_Task.createDate), ascending: false),
+                    .init(key: #keyPath(C_Task.title), ascending: true)
                 ]
             }
 
