@@ -10,19 +10,26 @@ import Core
 import Foundation
 
 public struct TaskEditorReducer: ReducerProtocol {
+    public init() {}
+    
     public struct State: Equatable {
-        var taskTobeDeleted: TodoTask?
+        var task: TodoTask
         var editingMemoOfTask: TodoTask?
         var deleteConfirmAlert: AlertState<Action>?
+
+        public init(task: TodoTask) {
+            self.task = task
+        }
     }
 
     public enum Action: Equatable {
-        case deleteTaskButtonTapped(TodoTask)
+        case deleteTaskButtonTapped
         case editMemoButtonTapped(TodoTask)
         case updateTask(TodoTask)
         case deleteTask(TodoTask)
         case updateMemo(TodoTask, TaskMemo?)
         case dismissDeleteConfirmAlert
+        case dismissMemoEditor
     }
 
     @Dependency(\.updateTask)
@@ -49,10 +56,10 @@ public struct TaskEditorReducer: ReducerProtocol {
                 return .fireAndForget {
                     await updateMemo(task, memo)
                 }
-            case .deleteTaskButtonTapped(let task):
+            case .deleteTaskButtonTapped:
                 state.deleteConfirmAlert = AlertState(
                     title: TextState("Delete Task"),
-                    primaryButton: .destructive(TextState("Confirm"), action: .send(.deleteTask(task))),
+                    primaryButton: .destructive(TextState("Confirm"), action: .send(.deleteTask(state.task))),
                     secondaryButton: .cancel(TextState("Cancel"))
                 )
                 return .none
@@ -61,6 +68,9 @@ public struct TaskEditorReducer: ReducerProtocol {
                 return .none
             case .editMemoButtonTapped(let task):
                 state.editingMemoOfTask = task
+                return .none
+            case .dismissMemoEditor:
+                state.editingMemoOfTask = nil
                 return .none
             }
         }
