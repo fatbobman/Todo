@@ -8,7 +8,7 @@ let package = Package(
     platforms: [
         .iOS(.v16),
         .macOS(.v13),
-        .macCatalyst(.v16),
+        .macCatalyst(.v16)
     ],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
@@ -21,7 +21,8 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", from: "0.40.0"),
-        .package(path: "../Core")
+        .package(path: "../Core"),
+        .package(path: "../ViewLibrary")
 
     ],
     targets: [
@@ -31,7 +32,8 @@ let package = Package(
             name: "Features",
             dependencies: [
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                .product(name: "Core",package: "Core")
+                .product(name: "Core", package: "Core"),
+                .product(name: "ViewLibrary", package: "ViewLibrary")
             ]
         ),
         .testTarget(

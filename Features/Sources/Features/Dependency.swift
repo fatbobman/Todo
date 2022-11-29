@@ -41,7 +41,7 @@ struct UpdateMemoKey: DependencyKey {
     static var liveValue: @Sendable (TodoTask, TaskMemo?) async -> Void = { _, _ in }
 }
 
-extension DependencyValues {
+public extension DependencyValues {
     var createNewGroup: @Sendable (TodoGroup) async -> Void {
         get { self[CreateNewGroupKey.self] }
         set { self[CreateNewGroupKey.self] = newValue }
