@@ -14,16 +14,16 @@ public struct MoveTaskToNewGroupView: View {
     @Environment(\.getMovableGroupListRequest) var getMovableGroupListRequest
     let task: TodoTask
     let dismiss: () -> Void
-    let taskCellTapped: (WrappedID, WrappedID) -> Void
+    let movableTaskTargetCellTapped: (WrappedID, WrappedID) -> Void
 
     public init(
         task: TodoTask,
         dismiss: @escaping () -> Void,
-        taskCellTapped: @escaping (WrappedID, WrappedID) -> Void
+        movableTaskTargetCellTapped: @escaping (WrappedID, WrappedID) -> Void
     ) {
         self.task = task
         self.dismiss = dismiss
-        self.taskCellTapped = taskCellTapped
+        self.movableTaskTargetCellTapped = movableTaskTargetCellTapped
     }
 
     public var body: some View {
@@ -31,7 +31,7 @@ public struct MoveTaskToNewGroupView: View {
             List(groups) { group in
                 let group = group.wrappedValue
                 Button {
-                    taskCellTapped(task.id, group.id)
+                    movableTaskTargetCellTapped(task.id, group.id)
                     dismiss()
                 }
             label: {
@@ -59,7 +59,7 @@ struct MoveTaskRootView: View {
         .sheet(isPresented: $showMoveSheet) {
             MoveTaskToNewGroupView(task: .sample1, dismiss: {
                 showMoveSheet = false
-            }, taskCellTapped: { _, _ in })
+            }, movableTaskTargetCellTapped: { _, _ in })
         }
     }
 }

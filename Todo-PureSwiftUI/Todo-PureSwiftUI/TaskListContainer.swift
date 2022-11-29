@@ -50,7 +50,7 @@ struct TaskListContainerView: View {
                     MoveTaskToNewGroupView(
                         task: taskToBeMoved,
                         dismiss: { self.taskToBeMoved = nil },
-                        taskCellTapped: taskCellTapped
+                        movableTaskTargetCellTapped: taskCellTapped
                     )
                 }
             }
@@ -86,10 +86,6 @@ struct TaskListContainerView: View {
         default:
             return ""
         }
-    }
-
-    private func dismissTaskDetail() {
-        holder.selectedTask = nil
     }
 
     private func deleteTaskButtonTapped(task: TodoTask) {
