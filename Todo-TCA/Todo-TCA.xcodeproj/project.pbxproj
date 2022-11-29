@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		765421C22935ADD8006574E1 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 765421C12935ADD8006574E1 /* ComposableArchitecture */; };
 		76555F3229345D8B00417AA1 /* Todo_TCAApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76555F3129345D8B00417AA1 /* Todo_TCAApp.swift */; };
-		76555F3429345D8B00417AA1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76555F3329345D8B00417AA1 /* ContentView.swift */; };
 		76555F3629345D8C00417AA1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76555F3529345D8C00417AA1 /* Assets.xcassets */; };
 		76555F3929345D8C00417AA1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 76555F3829345D8C00417AA1 /* Preview Assets.xcassets */; };
 		76555F4229345F5D00417AA1 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 76555F4129345F5D00417AA1 /* Core */; };
@@ -20,7 +20,6 @@
 /* Begin PBXFileReference section */
 		76555F2E29345D8B00417AA1 /* Todo-TCA.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Todo-TCA.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		76555F3129345D8B00417AA1 /* Todo_TCAApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Todo_TCAApp.swift; sourceTree = "<group>"; };
-		76555F3329345D8B00417AA1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		76555F3529345D8C00417AA1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		76555F3829345D8C00417AA1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -30,6 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				765421C22935ADD8006574E1 /* ComposableArchitecture in Frameworks */,
 				76555F4629345F5D00417AA1 /* Features in Frameworks */,
 				76555F4429345F5D00417AA1 /* DB in Frameworks */,
 				76555F4229345F5D00417AA1 /* Core in Frameworks */,
@@ -61,7 +61,6 @@
 			isa = PBXGroup;
 			children = (
 				76555F3129345D8B00417AA1 /* Todo_TCAApp.swift */,
-				76555F3329345D8B00417AA1 /* ContentView.swift */,
 				76555F3529345D8C00417AA1 /* Assets.xcassets */,
 				76555F3729345D8C00417AA1 /* Preview Content */,
 			);
@@ -104,6 +103,7 @@
 				76555F4329345F5D00417AA1 /* DB */,
 				76555F4529345F5D00417AA1 /* Features */,
 				76555F4729345F5D00417AA1 /* ViewLibrary */,
+				765421C12935ADD8006574E1 /* ComposableArchitecture */,
 			);
 			productName = "Todo-TCA";
 			productReference = 76555F2E29345D8B00417AA1 /* Todo-TCA.app */;
@@ -133,6 +133,9 @@
 				Base,
 			);
 			mainGroup = 76555F2529345D8B00417AA1;
+			packageReferences = (
+				765421C02935ADD8006574E1 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+			);
 			productRefGroup = 76555F2F29345D8B00417AA1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -159,7 +162,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				76555F3429345D8B00417AA1 /* ContentView.swift in Sources */,
 				76555F3229345D8B00417AA1 /* Todo_TCAApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -362,7 +364,23 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		765421C02935ADD8006574E1 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		765421C12935ADD8006574E1 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 765421C02935ADD8006574E1 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
+		};
 		76555F4129345F5D00417AA1 /* Core */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Core;
