@@ -34,7 +34,7 @@ public struct TaskEditorReducer: ReducerProtocol {
         case dismiss
     }
 
-    @Dependency(\.updateTask)
+    @Dependency(\.deleteTask)
     var deleteTask
 
     @Dependency(\.updateTask)

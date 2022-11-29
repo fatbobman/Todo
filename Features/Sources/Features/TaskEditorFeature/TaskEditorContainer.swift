@@ -40,7 +40,6 @@ public struct TaskEditorContainerView: View {
             }
             .onChange(of: viewStore.dismiss) { dismiss in
                 if dismiss {
-                    print("abc")
                     self.dismiss()
                 }
             }
