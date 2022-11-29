@@ -50,7 +50,7 @@ struct TaskListContainerView: View {
                     MoveTaskToNewGroupView(
                         task: taskToBeMoved,
                         dismiss: { self.taskToBeMoved = nil },
-                        movableTaskTargetCellTapped: taskCellTapped
+                        movableTaskTargetCellTapped: movableTaskTargetCellTapped
                     )
                 }
             }
@@ -117,7 +117,7 @@ struct TaskListContainerView: View {
         taskToBeMoved = task
     }
 
-    private func taskCellTapped(taskID: WrappedID, groupID: WrappedID) {
+    private func movableTaskTargetCellTapped(taskID: WrappedID, groupID: WrappedID) {
         Task { await moveTaskEnv(taskID, groupID) }
     }
 }

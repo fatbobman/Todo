@@ -14,11 +14,9 @@ import ViewLibrary
 public struct TaskEditorContainerView: View {
     let store: StoreOf<TaskEditorReducer>
     @Environment(\.dismiss) private var dismiss
-    let viewStore: ViewStoreOf<TaskEditorReducer>
 
     public init(store: StoreOf<TaskEditorReducer>) {
         self.store = store
-        self.viewStore = ViewStore(store, observe: { $0 })
     }
 
     public var body: some View {
@@ -26,7 +24,7 @@ public struct TaskEditorContainerView: View {
             TaskEditorView(
                 task: viewStore.task,
                 updateTask: { viewStore.send(.updateTask($0)) },
-                deleteTaskButtonTapped: performDeleteTask,
+                deleteTaskButtonTapped: { _ in viewStore.send(.deleteTaskButtonTapped) },
                 editMemoButtonTapped: { viewStore.send(.editMemoButtonTapped($0)) }
             )
             .alert(store.scope(state: \.deleteConfirmAlert), dismiss: TaskEditorReducer.Action.dismissDeleteConfirmAlert)
@@ -40,12 +38,13 @@ public struct TaskEditorContainerView: View {
                     .interactiveDismissDisabled(true)
                 }
             }
+            .onChange(of: viewStore.dismiss) { dismiss in
+                if dismiss {
+                    print("abc")
+                    self.dismiss()
+                }
+            }
         }
-    }
-
-    func performDeleteTask(task: TodoTask) {
-        viewStore.send(.deleteTaskButtonTapped)
-        dismiss()
     }
 }
 

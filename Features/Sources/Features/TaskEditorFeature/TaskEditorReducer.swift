@@ -11,11 +11,12 @@ import Foundation
 
 public struct TaskEditorReducer: ReducerProtocol {
     public init() {}
-    
+
     public struct State: Equatable {
         var task: TodoTask
         var editingMemoOfTask: TodoTask?
         var deleteConfirmAlert: AlertState<Action>?
+        var dismiss = false
 
         public init(task: TodoTask) {
             self.task = task
@@ -30,6 +31,7 @@ public struct TaskEditorReducer: ReducerProtocol {
         case updateMemo(TodoTask, TaskMemo?)
         case dismissDeleteConfirmAlert
         case dismissMemoEditor
+        case dismiss
     }
 
     @Dependency(\.updateTask)
@@ -49,8 +51,9 @@ public struct TaskEditorReducer: ReducerProtocol {
                     await updateTask(task)
                 }
             case .deleteTask(let task):
-                return .fireAndForget {
+                return .task {
                     await deleteTask(task)
+                    return .dismiss
                 }
             case .updateMemo(let task, let memo):
                 return .fireAndForget {
@@ -71,6 +74,9 @@ public struct TaskEditorReducer: ReducerProtocol {
                 return .none
             case .dismissMemoEditor:
                 state.editingMemoOfTask = nil
+                return .none
+            case .dismiss:
+                state.dismiss = true
                 return .none
             }
         }

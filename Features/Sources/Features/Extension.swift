@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Yang Xu on 2022/11/29.
 //
@@ -46,6 +46,43 @@ public extension View {
         content: @escaping (Store<State, Action>) -> Content
     ) -> some View where State: Equatable, Action: Equatable, Content: View {
         modifier(OptionalStateFullScreenCoverModifier(store: store, dismissAction: dismissAction, onDismiss: onDismiss, content: content))
+    }
+
+    func navigationDestination<State, Action, Content>(
+        _ store: Store<State?, Action>,
+        dismissAction: Action,
+        destinationView: @escaping (Store<State, Action>) -> Content
+    ) -> some View where Content: View, State: Equatable, Action: Equatable {
+        modifier(OptionalStateNavigationDestination(store: store, dismissAction: dismissAction, destinationView: destinationView))
+    }
+}
+
+struct OptionalStateNavigationDestination<State, Action, V>: ViewModifier where State: Equatable, Action: Equatable, V: View {
+    @ObservedObject var viewStore: ViewStore<State?, Action>
+    let dismissAction: Action
+    let store: Store<State?, Action>
+    let destinationView: (Store<State, Action>) -> V
+    init(store: Store<State?, Action>, dismissAction: Action, destinationView: @escaping (Store<State, Action>) -> V) {
+        self.dismissAction = dismissAction
+        self.store = store
+        self.destinationView = destinationView
+        self.viewStore = ViewStore(store)
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .navigationDestination(
+                isPresented: viewStore.binding(send: dismissAction).isPresent(dismiss: {
+                    if viewStore.state != nil {
+                        viewStore.send(dismissAction)
+                    }
+                }),
+                destination: {
+                    IfLetStore(store) { store in
+                        destinationView(store)
+                    }
+                }
+            )
     }
 }
 
@@ -106,7 +143,6 @@ struct OptionalStateFullScreenCoverModifier<State, Action, SheetView>: ViewModif
         }
     }
 }
-
 
 private extension Binding {
     func isPresent<Wrapped>(dismiss: @escaping () -> Void) -> Binding<Bool> where Value == Wrapped? {
