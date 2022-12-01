@@ -29,10 +29,20 @@ public enum FetchDataSource<Value>: Equatable where Value: BaseValueProtocol {
     case mockObjects(EquatableObjects<Value>)
 }
 
-public struct ObjectsDataSource: Equatable {
+public struct ObjectsDataSource: ObjectsDataSourceProtocol {
     public var unCompletedTasks: FetchDataSource<TodoTask>
     public var completedTasks: FetchDataSource<TodoTask>
     public var groups: FetchDataSource<TodoGroup>
+
+    public init(
+        unCompletedTasks: FetchDataSource<TodoTask>,
+        completedTasks: FetchDataSource<TodoTask>,
+        groups: FetchDataSource<TodoGroup>
+    ) {
+        self.unCompletedTasks = unCompletedTasks
+        self.completedTasks = completedTasks
+        self.groups = groups
+    }
 }
 
 public extension ObjectsDataSource {
@@ -41,15 +51,19 @@ public extension ObjectsDataSource {
         completedTasks: .mockObjects(.init([MockTask(.sample3).eraseToAny()])),
         groups: .mockObjects(.init([MockGroup(.sample1).eraseToAny()]))
     )
+
+    static let live = ObjectsDataSource(unCompletedTasks: .fetchRequest, completedTasks: .fetchRequest, groups: .fetchRequest)
 }
 
 public struct ObjectsDataSourceKey: EnvironmentKey {
-    public static var defaultValue: ObjectsDataSource = .default
+    public static var defaultValue: any ObjectsDataSourceProtocol = ObjectsDataSource.default
 }
 
 public extension EnvironmentValues {
-    var dataSource: ObjectsDataSource {
+    var dataSource: any ObjectsDataSourceProtocol {
         get { self[ObjectsDataSourceKey.self] }
         set { self[ObjectsDataSourceKey.self] = newValue }
     }
 }
+
+public protocol ObjectsDataSourceProtocol: Equatable {}

@@ -11,7 +11,7 @@ import Foundation
 import SwiftUI
 
 @propertyWrapper
-public struct MockableFetchRequest<Value>: DynamicProperty where Value: BaseValueProtocol {
+public struct MockableFetchRequest<Root, Value>: DynamicProperty where Value: BaseValueProtocol, Root: ObjectsDataSourceProtocol {
     @Environment(\.managedObjectContext) var viewContext
     @Environment(\.dataSource) var dataSource
 
@@ -20,7 +20,7 @@ public struct MockableFetchRequest<Value>: DynamicProperty where Value: BaseValu
         values
     }
 
-    let objectKeyPath: KeyPath<ObjectsDataSource, FetchDataSource<Value>>
+    let objectKeyPath: KeyPath<Root, FetchDataSource<Value>>
     let animation: Animation?
     let fetchRequest: NSFetchRequest<NSManagedObject>?
     @State var updateWrappedValue = MutableHolder<([AnyConvertibleValueObservableObject<Value>]) -> Void>({ _ in })
@@ -30,7 +30,7 @@ public struct MockableFetchRequest<Value>: DynamicProperty where Value: BaseValu
     @State var sender = PassthroughSubject<[AnyConvertibleValueObservableObject<Value>], Never>()
 
     public init(
-        _ objectKeyPath: KeyPath<ObjectsDataSource, FetchDataSource<Value>>,
+        _ objectKeyPath: KeyPath<Root, FetchDataSource<Value>>,
         fetchRequest: NSFetchRequest<NSManagedObject>? = nil,
         animation: Animation? = .default
     ) {
@@ -65,7 +65,7 @@ public struct MockableFetchRequest<Value>: DynamicProperty where Value: BaseValu
         }
 
         // fetch Request
-        if case .fetchRequest = dataSource[keyPath: objectKeyPath], fetcher.value == nil {
+        if let dataSource = dataSource as? Root, case .fetchRequest = dataSource[keyPath: objectKeyPath], fetcher.value == nil {
             fetcher.value = .init(sender: sender)
             if let fetchRequest {
                 updateFetchRequest(fetchRequest)
@@ -73,13 +73,13 @@ public struct MockableFetchRequest<Value>: DynamicProperty where Value: BaseValu
         }
 
         // mock objects
-        if case .mockObjects(let objects) = dataSource[keyPath: objectKeyPath], objects != EquatableObjects(_values.wrappedValue) {
+        if let dataSource = dataSource as? Root, case .mockObjects(let objects) = dataSource[keyPath: objectKeyPath], objects != EquatableObjects(_values.wrappedValue) {
             sender.send(objects.values)
         }
     }
 
     func updateFetchRequest(_ request: NSFetchRequest<NSManagedObject>) {
-        if case .fetchRequest = dataSource[keyPath: objectKeyPath] {
+        if let dataSource = dataSource as? Root, case .fetchRequest = dataSource[keyPath: objectKeyPath] {
             fetcher.value?.updateRequest(context: viewContext, request: request)
         }
     }

@@ -9,6 +9,7 @@ import ComposableArchitecture
 import DB
 import Features
 import SwiftUI
+import Core
 
 @main
 struct Todo_TCAApp: App {
@@ -37,11 +38,7 @@ struct Todo_TCAApp: App {
             .environment(\.getTaskObject, stack.getTaskObject)
             .environment(\.getMovableGroupListRequest, stack.getMovableGroupListRequest)
             .environment(\.taskCount, stack.taskCount)
-            .transformEnvironment(\.dataSource) {
-                $0.completedTasks = .fetchRequest
-                $0.groups = .fetchRequest
-                $0.unCompletedTasks = .fetchRequest
-            }
+            .environment(\.dataSource,ObjectsDataSource.live)
         }
     }
 }

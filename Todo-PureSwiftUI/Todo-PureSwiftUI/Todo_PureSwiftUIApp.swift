@@ -6,9 +6,9 @@
 //
 
 import Core
+import DB
 import SwiftUI
 import ViewLibrary
-import DB
 
 @main
 struct Todo_PureSwiftUIApp: App {
@@ -32,11 +32,7 @@ struct Todo_PureSwiftUIApp: App {
                 .environment(\.getTaskObject, stack.getTaskObject)
                 .environment(\.getMovableGroupListRequest, stack.getMovableGroupListRequest)
                 .environment(\.taskCount, stack.taskCount)
-                .transformEnvironment(\.dataSource){
-                    $0.completedTasks = .fetchRequest
-                    $0.groups = .fetchRequest
-                    $0.unCompletedTasks = .fetchRequest
-                }
+                .environment(\.dataSource, ObjectsDataSource.live)
         }
     }
 }

@@ -101,8 +101,10 @@ struct TaskListContainerViewPreviewRoot: View {
             )
         )
         .transformEnvironment(\.dataSource) {
-            $0.unCompletedTasks = .mockObjects(.init(dataSource.unCompleted))
-            $0.completedTasks = .mockObjects(.init(dataSource.completed))
+            guard var result = $0 as? ObjectsDataSource else { return }
+            result.unCompletedTasks = .mockObjects(.init(dataSource.unCompleted))
+            result.completedTasks = .mockObjects(.init(dataSource.completed))
+            $0 = result
         }
         .id(id)
     }

@@ -121,11 +121,13 @@ struct GroupListContainerViewPreviewRoot: View {
         }
         .environmentObject(holder)
         .transformEnvironment(\.dataSource) {
-            $0.groups = .mockObjects(.init(
+            guard var result = $0 as? ObjectsDataSource else { return }
+            result.groups = .mockObjects(.init(
                 groups
             ))
-            $0.unCompletedTasks = .mockObjects(.init(dataSource.unCompleted))
-            $0.completedTasks = .mockObjects(.init(dataSource.completed))
+            result.unCompletedTasks = .mockObjects(.init(dataSource.unCompleted))
+            result.completedTasks = .mockObjects(.init(dataSource.completed))
+            $0 = result
         }
         .environment(\.updateGroup) { group in
             if group.id == .string("createNewGroup") {
@@ -178,6 +180,12 @@ struct GroupListContainerViewPreviewRoot: View {
         .environment(\.updateMemo) { task, memo in
             guard let index = await dataSource.tasks.firstIndex(where: { $0.id == task.id }) else { return }
             await (dataSource.tasks[index]._object as? MockTask)?.memo = memo
+        }
+        .environment(\.createNewGroup) { group in
+            let newGroup = TodoGroup(id: .uuid(UUID()), title: group.title, taskCount: 0)
+            await MainActor.run {
+                groups.append(MockGroup(newGroup).eraseToAny())
+            }
         }
     }
 }

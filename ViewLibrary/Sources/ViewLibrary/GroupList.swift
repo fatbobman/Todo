@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 public struct GroupListView: View {
-    @MockableFetchRequest(\.groups) var groups
+    @MockableFetchRequest(\ObjectsDataSource.groups) var groups
     @Environment(\.getTodoGroupRequest) var getTodoGroupRequest
     let deletedGroupButtonTapped: (TodoGroup) -> Void
     let updateGroupButtonTapped: (TodoGroup) -> Void
@@ -18,9 +18,9 @@ public struct GroupListView: View {
     let createNewGroupButtonTapped: () -> Void
 
     public init(deletedGroupButtonTapped: @escaping (TodoGroup) -> Void,
-         updateGroupButtonTapped: @escaping (TodoGroup) -> Void,
-         groupCellTapped: @escaping (TaskSource) -> Void,
-         createNewGroupButtonTapped: @escaping () -> Void) {
+                updateGroupButtonTapped: @escaping (TodoGroup) -> Void,
+                groupCellTapped: @escaping (TaskSource) -> Void,
+                createNewGroupButtonTapped: @escaping () -> Void) {
         self.deletedGroupButtonTapped = deletedGroupButtonTapped
         self.updateGroupButtonTapped = updateGroupButtonTapped
         self.groupCellTapped = groupCellTapped

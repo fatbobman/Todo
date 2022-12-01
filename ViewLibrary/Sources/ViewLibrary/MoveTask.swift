@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 public struct MoveTaskToNewGroupView: View {
-    @MockableFetchRequest(\.groups) var groups
+    @MockableFetchRequest(\ObjectsDataSource.groups) var groups
     @Environment(\.getMovableGroupListRequest) var getMovableGroupListRequest
     let task: TodoTask
     let dismiss: () -> Void
@@ -68,11 +68,13 @@ struct MoveTaskViewPreview: PreviewProvider {
     static var previews: some View {
         MoveTaskRootView()
             .transformEnvironment(\.dataSource) {
-                $0.groups = .mockObjects(.init([
+                guard var result = $0 as? ObjectsDataSource else { return }
+                result.groups = .mockObjects(.init([
                     MockGroup(.sample1).eraseToAny(),
                     MockGroup(.sample2).eraseToAny(),
                     MockGroup(.sample3).eraseToAny()
                 ]))
+                $0 = result
             }
     }
 }
