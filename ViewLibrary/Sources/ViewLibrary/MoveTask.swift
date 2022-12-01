@@ -29,13 +29,14 @@ public struct MoveTaskToNewGroupView: View {
     public var body: some View {
         NavigationStack {
             List(groups) { group in
-                let group = group.wrappedValue
-                Button {
-                    movableTaskTargetCellTapped(task.id, group.id)
-                    dismiss()
-                }
-            label: {
-                    Text(group.title)
+                if let group = group.wrappedValue {
+                    Button {
+                        movableTaskTargetCellTapped(task.id, group.id)
+                        dismiss()
+                    }
+                label: {
+                        Text(group.title)
+                    }
                 }
             }
             .tint(.primary)

@@ -15,7 +15,7 @@ public protocol BaseValueProtocol: Equatable, Identifiable, Sendable {
 
 public protocol ConvertibleValueObservableObject<Value>: ObservableObject, Equatable, Identifiable where ID == WrappedID {
     associatedtype Value: BaseValueProtocol
-    func convertToValueType() -> Value
+    func convertToValueType() -> Value?
 }
 
 public enum WrappedID: Equatable, Identifiable, Sendable, Hashable {
@@ -106,7 +106,7 @@ public extension TestableConvertibleValueObservableObject where ObjectWillChange
         lhs._wrappedValue == rhs._wrappedValue
     }
 
-    func convertToValueType() -> WrappedValue {
+    func convertToValueType() -> WrappedValue? {
         _wrappedValue
     }
 
@@ -133,7 +133,7 @@ public class AnyConvertibleValueObservableObject<Value>: ObservableObject, Ident
         _object.id
     }
 
-    public var wrappedValue: Value {
+    public var wrappedValue: Value? {
         _object.convertToValueType()
     }
 
@@ -146,7 +146,7 @@ public class AnyConvertibleValueObservableObject<Value>: ObservableObject, Ident
     }
 }
 
-extension AnyConvertibleValueObservableObject : Hashable {
+extension AnyConvertibleValueObservableObject: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }

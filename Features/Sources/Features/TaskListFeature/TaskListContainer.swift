@@ -118,11 +118,11 @@ final class ListContainerDataSource: ObservableObject {
     ]
 
     var completed: [AnyConvertibleValueObservableObject<TodoTask>] {
-        tasks.filter { $0.wrappedValue.completed }
+        tasks.filter { $0.wrappedValue!.completed }
     }
 
     var unCompleted: [AnyConvertibleValueObservableObject<TodoTask>] {
-        tasks.filter { !$0.wrappedValue.completed }
+        tasks.filter { !$0.wrappedValue!.completed }
     }
 
     static let share = ListContainerDataSource()

@@ -14,9 +14,9 @@ extension C_Memo: ConvertibleValueObservableObject {
         .objectID(objectID)
     }
 
-    public func convertToValueType() -> TaskMemo {
+    public func convertToValueType() -> TaskMemo? {
         guard let context = managedObjectContext else {
-            fatalError("Must be run in a managed environment")
+            return nil
         }
         return context.performAndWait {
             TaskMemo(id: id, content: content ?? "")
@@ -29,9 +29,9 @@ extension C_Group: ConvertibleValueObservableObject {
         .objectID(objectID)
     }
 
-    public func convertToValueType() -> TodoGroup {
+    public func convertToValueType() -> TodoGroup? {
         guard let context = managedObjectContext else {
-            fatalError("Must be run in a managed environment")
+            return nil
         }
         return context.performAndWait {
             TodoGroup(
@@ -48,9 +48,9 @@ extension C_Task: ConvertibleValueObservableObject {
         .objectID(objectID)
     }
 
-    public func convertToValueType() -> TodoTask {
+    public func convertToValueType() -> TodoTask? {
         guard let context = managedObjectContext else {
-            fatalError("Must be run in a managed environment")
+            return nil
         }
         return context.performAndWait {
             TodoTask(

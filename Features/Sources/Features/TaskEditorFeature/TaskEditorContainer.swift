@@ -51,23 +51,25 @@ public struct TaskEditorContainerView: View {
 struct TaskEditorContainerPreviewRoot: View {
     @State var taskObject = MockTask(.sample1).eraseToAny()
     var body: some View {
-        TaskEditorContainerView(
-            store: .init(
-                initialState: .init(task: taskObject.wrappedValue),
-                reducer: TaskEditorReducer()
-                    .dependency(\.deleteTask) { _ in }
-                    .dependency(\.updateTask) { task in
-                        (taskObject._object as? MockTask)?.update(task)
-                    }
-                    .dependency(\.updateMemo) { task, memo in
-                        var task = task
-                        task.memo = memo
-                        (taskObject._object as? MockTask)?.update(task)
-                    }
+        if let task = taskObject.wrappedValue {
+            TaskEditorContainerView(
+                store: .init(
+                    initialState: .init(task: task),
+                    reducer: TaskEditorReducer()
+                        .dependency(\.deleteTask) { _ in }
+                        .dependency(\.updateTask) { task in
+                            (taskObject._object as? MockTask)?.update(task)
+                        }
+                        .dependency(\.updateMemo) { task, memo in
+                            var task = task
+                            task.memo = memo
+                            (taskObject._object as? MockTask)?.update(task)
+                        }
+                )
             )
-        )
-        .environment(\.getTaskObject) { _ in
-            taskObject
+            .environment(\.getTaskObject) { _ in
+                taskObject
+            }
         }
     }
 }

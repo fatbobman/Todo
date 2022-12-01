@@ -26,30 +26,31 @@ public struct GroupCell: View {
     }
 
     public var body: some View {
-        let group = groupObject.wrappedValue
-        Button {
-            groupCellTapped(.list(group))
-        }
+        if let group = groupObject.wrappedValue {
+            Button {
+                groupCellTapped(.list(group))
+            }
         label: {
-            LabeledContent(group.title, value: group.taskCount == 0 ? "" : "\(group.taskCount)")
-                .animation(.default, value: group)
-        }
-        .tint(.primary)
-        .swipeActions(edge: .leading) {
-            Button {
-                updateGroupButtonTapped(group)
-            } label: {
-                Label("Edit", systemImage: "rectangle.and.pencil.and.ellipsis")
+                LabeledContent(group.title, value: group.taskCount == 0 ? "" : "\(group.taskCount)")
+                    .animation(.default, value: group)
             }
-            .tint(.orange)
-        }
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            Button {
-                deletedGroupButtonTapped(group)
-            } label: {
-                Label("Delete", systemImage: "trash")
+            .tint(.primary)
+            .swipeActions(edge: .leading) {
+                Button {
+                    updateGroupButtonTapped(group)
+                } label: {
+                    Label("Edit", systemImage: "rectangle.and.pencil.and.ellipsis")
+                }
+                .tint(.orange)
             }
-            .tint(.red)
+            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                Button {
+                    deletedGroupButtonTapped(group)
+                } label: {
+                    Label("Delete", systemImage: "trash")
+                }
+                .tint(.red)
+            }
         }
     }
 }

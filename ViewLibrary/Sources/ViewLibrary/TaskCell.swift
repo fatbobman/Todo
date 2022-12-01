@@ -31,69 +31,70 @@ public struct TaskCellView: View {
     }
 
     public var body: some View {
-        let task = taskObject.wrappedValue
-        HStack {
-            Button {
-                setCompleted(task)
-            } label: {
-                Image(systemName: task.completed ? "checkmark.circle.fill" : "circle")
-                    .symbolRenderingMode(.multicolor)
-                    .animation(.default, value: task.completed)
-            }
-
-            Button {
-                taskCellTapped(task)
-            } label: {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text(task.title)
-                        .strikethrough(task.completed, color: .secondary)
-                        .font(.footnote)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
+        if let task = taskObject.wrappedValue {
+            HStack {
+                Button {
+                    setCompleted(task)
+                } label: {
+                    Image(systemName: task.completed ? "checkmark.circle.fill" : "circle")
+                        .symbolRenderingMode(.multicolor)
                         .animation(.default, value: task.completed)
-                    if task.memo != nil {
-                        HStack {
-                            Image(systemName: "doc.text")
-                            Text("Memo")
+                }
+
+                Button {
+                    taskCellTapped(task)
+                } label: {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text(task.title)
+                            .strikethrough(task.completed, color: .secondary)
+                            .font(.footnote)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .contentShape(Rectangle())
+                            .animation(.default, value: task.completed)
+                        if task.memo != nil {
+                            HStack {
+                                Image(systemName: "doc.text")
+                                Text("Memo")
+                            }
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
                         }
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
                     }
                 }
-            }
 
-            ZStack {
-                Image(systemName: task.priority == .high ? "star.fill" : "star")
-                    .foregroundColor(task.priority == .high ? .blue : nil)
-                    .onTapGesture {
-                        setPriority(task)
-                    }
-                    .animation(.easeInOut, value: task.priority)
+                ZStack {
+                    Image(systemName: task.priority == .high ? "star.fill" : "star")
+                        .foregroundColor(task.priority == .high ? .blue : nil)
+                        .onTapGesture {
+                            setPriority(task)
+                        }
+                        .animation(.easeInOut, value: task.priority)
+                }
             }
-        }
-        .buttonStyle(.plain)
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            Button {
-                deleteTaskButtonTapped(task)
-            } label: {
-                Image(systemName: "trash")
+            .buttonStyle(.plain)
+            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                Button {
+                    deleteTaskButtonTapped(task)
+                } label: {
+                    Image(systemName: "trash")
+                }
+                .tint(.red)
             }
-            .tint(.red)
-        }
-        .swipeActions(edge: .leading) {
-            Button {
-                setMyDay(task)
-            } label: {
-                Image(systemName: "sun.max")
-            }
-            .tint(.orange)
+            .swipeActions(edge: .leading) {
+                Button {
+                    setMyDay(task)
+                } label: {
+                    Image(systemName: "sun.max")
+                }
+                .tint(.orange)
 
-            Button {
-                moveTaskButtonTapped(task)
-            } label: {
-                Image(systemName: "rectangle.2.swap")
+                Button {
+                    moveTaskButtonTapped(task)
+                } label: {
+                    Image(systemName: "rectangle.2.swap")
+                }
+                .tint(.green)
             }
-            .tint(.green)
         }
     }
 
@@ -151,7 +152,7 @@ struct TaskCellViewPreview: PreviewProvider {
             )
         }
         .onAppear {
-            var task = previewTask.wrappedValue
+            guard var task = previewTask.wrappedValue else { return }
             task.title = "协调器、持久化存储、托管上下文包装的官方实现。几乎无需调整任何核心代码。"
             task.memo = .sample1
             (previewTask._object as? MockTask)?.update(task)

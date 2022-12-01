@@ -138,9 +138,10 @@ public struct TaskEditorView: View {
         }
         .task { @MainActor in
             guard let taskObject = await getTaskObject(task) else { return }
-            task = taskObject.wrappedValue
             for await _ in taskObject.objectWillChange.values {
-                task = taskObject.wrappedValue
+                if let task = taskObject.wrappedValue {
+                    self.task = task
+                }
             }
         }
     }
