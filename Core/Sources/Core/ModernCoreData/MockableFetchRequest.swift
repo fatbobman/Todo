@@ -39,6 +39,12 @@ public struct MockableFetchRequest<Root, Value>: DynamicProperty where Value: Ba
         self.fetchRequest = fetchRequest
     }
 
+    public var publisher: AnyPublisher<Void, Never> {
+        sender
+            .map { _ in () }
+            .eraseToAnyPublisher()
+    }
+
     public func update() {
         // set updateWrappedValue
         let values = _values
@@ -58,6 +64,9 @@ public struct MockableFetchRequest<Root, Value>: DynamicProperty where Value: Ba
         if cancellable.value == nil {
             cancellable.value = sender
                 .delay(for: .nanoseconds(1), scheduler: RunLoop.main)
+                .removeDuplicates {
+                    EquatableObjects($0) == EquatableObjects($1)
+                }
                 .receive(on: DispatchQueue.main)
                 .sink {
                     updateWrappedValue.value($0)
