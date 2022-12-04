@@ -28,6 +28,7 @@ public struct TaskListContainerView: View {
                 moveTaskButtonTapped: { viewStore.send(.moveTaskButtonTapped($0)) },
                 taskCellTapped: { viewStore.send(.taskCellTapped($0)) }
             )
+            .onAppear { viewStore.send(.onAppear) }
             .safeAreaInset(edge: .bottom) {
                 InputNewTaskView(
                     taskSource: viewStore.taskSource,
