@@ -11,7 +11,6 @@ import SwiftUI
 
 public struct TaskListView: View {
     @MockableFetchRequest(\ObjectsDataSource.unCompletedTasks) var tasks
-    @MockableFetchRequest(\ObjectsDataSource.completedTasks) var completedTasks
     @Environment(\.getTodoListRequest) var getTodoListRequest
     let taskSource: TaskSource
     let taskSortType: TaskSortType
