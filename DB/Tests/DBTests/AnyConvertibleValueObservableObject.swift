@@ -63,7 +63,7 @@ final class AnyConvertibleValueObservableObjectTests: XCTestCase {
         var groups = [TodoGroup]()
         // average: 0.015
         measure {
-            groups = result.map { $0.convertToValueType() }
+            groups = result.map { $0.convertToValueType()! }
             groups.removeAll()
         }
     }

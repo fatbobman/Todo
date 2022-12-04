@@ -14,6 +14,7 @@ public enum TaskSortType: String, Equatable, CaseIterable, Identifiable {
     case title = "Title"
     case createDate = "Create Date"
     case priority = "Priority"
+    case completed = "Completed"
 
     public var id: Self {
         self
@@ -31,9 +32,9 @@ public enum TaskSource: Equatable {
 /// 根据 TaskSource、TaskSortType 返回所需的 NSFetchRequest
 /// 会返回两个 Request （ unCompleted , completed ）
 public struct TodoListRequestKey: EnvironmentKey {
-    public static var defaultValue: @Sendable (TaskSource, TaskSortType) async -> (unCompleted: NSFetchRequest<NSManagedObject>?, completed: NSFetchRequest<NSManagedObject>?) = { _, _ in
+    public static var defaultValue: @Sendable (TaskSource, TaskSortType) async -> NSFetchRequest<NSManagedObject>? = { _, _ in
         print("Get todo list request not implement")
-        return (nil, nil)
+        return nil
     }
 }
 
@@ -72,7 +73,7 @@ public struct TaskCountKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
-    var getTodoListRequest: @Sendable (TaskSource, TaskSortType) async -> (unCompleted: NSFetchRequest<NSManagedObject>?, completed: NSFetchRequest<NSManagedObject>?) {
+    var getTodoListRequest: @Sendable (TaskSource, TaskSortType) async -> NSFetchRequest<NSManagedObject>? {
         get { self[TodoListRequestKey.self] }
         set { self[TodoListRequestKey.self] = newValue }
     }

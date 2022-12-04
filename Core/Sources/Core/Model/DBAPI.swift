@@ -11,7 +11,7 @@ import Foundation
 
 public protocol DBAPI {
     /// 获取 Task FetchRequest
-    var getTodoListRequest: @Sendable (TaskSource, TaskSortType) async -> (unCompleted: NSFetchRequest<NSManagedObject>?, completed: NSFetchRequest<NSManagedObject>?) { get }
+    var getTodoListRequest: @Sendable (TaskSource, TaskSortType) async -> NSFetchRequest<NSManagedObject>? { get }
 
     /// 获取 Group Request
     var getTodoGroupRequest: @Sendable () async -> NSFetchRequest<NSManagedObject>? { get }

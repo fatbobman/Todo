@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 public struct TaskListView: View {
-    @MockableFetchRequest(\ObjectsDataSource.unCompletedTasks) var unCompletedTasks
+    @MockableFetchRequest(\ObjectsDataSource.unCompletedTasks) var tasks
     @MockableFetchRequest(\ObjectsDataSource.completedTasks) var completedTasks
     @Environment(\.getTodoListRequest) var getTodoListRequest
     let taskSource: TaskSource
@@ -36,7 +36,7 @@ public struct TaskListView: View {
 
     public var body: some View {
         List {
-            ForEach(unCompletedTasks) { task in
+            ForEach(tasks) { task in
                 TaskCellView(
                     taskObject: task,
                     updateTask: updateTask,
@@ -45,28 +45,11 @@ public struct TaskListView: View {
                     taskCellTapped: taskCellTapped
                 )
             }
-
-            if !completedTasks.isEmpty {
-                Section("Completed") {
-                    ForEach(completedTasks) { task in
-                        TaskCellView(
-                            taskObject: task,
-                            updateTask: updateTask,
-                            deleteTaskButtonTapped: deleteTaskButtonTapped,
-                            moveTaskButtonTapped: moveTaskButtonTapped,
-                            taskCellTapped: taskCellTapped
-                        )
-                    }
-                }
-            }
         }
         .task(id: taskSortType) { @MainActor in
-            let (unCompletedRequest, completedRequest) = await getTodoListRequest(taskSource, taskSortType)
-            if let unCompletedRequest {
-                $unCompletedTasks = unCompletedRequest
-            }
-            if let completedRequest {
-                $completedTasks = completedRequest
+            let request = await getTodoListRequest(taskSource, taskSortType)
+            if let request {
+                $tasks = request
             }
         }
     }

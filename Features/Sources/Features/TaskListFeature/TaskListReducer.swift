@@ -117,7 +117,7 @@ public struct TaskListReducer: ReducerProtocol {
                 return .none
             case .onAppear:
                 return .task {
-                    let saved = UserDefaults.standard.string(forKey: sortTypeKey) ?? TaskSortType.title.rawValue
+                    let saved = UserDefaults.standard.string(forKey: sortTypeKey) ?? TaskSortType.completed.rawValue
                     let sortType = TaskSortType(rawValue: saved) ?? .title
                     return .changeSortType(sortType)
                 }

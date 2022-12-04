@@ -22,11 +22,11 @@ final class DBTests: XCTestCase {
         await stack._createNewGroup(todoGroup)
         let request = NSFetchRequest<C_Group>(entityName: "C_Group")
         request.sortDescriptors = [.init(key: "title", ascending: true)]
-        var group = try stack.viewContext.fetch(request).first!.convertToValueType()
+        var group = try stack.viewContext.fetch(request).first!.convertToValueType()!
         // change
         group.title = "New"
         await stack._updateGroup(group)
-        let newGroup = try stack.viewContext.fetch(request).first!.convertToValueType()
+        let newGroup = try stack.viewContext.fetch(request).first!.convertToValueType()!
         XCTAssertEqual(group.id, newGroup.id)
         XCTAssertEqual(newGroup.title, "New")
     }
@@ -37,7 +37,7 @@ final class DBTests: XCTestCase {
         await stack._createNewGroup(todoGroup)
         let request = NSFetchRequest<C_Group>(entityName: "C_Group")
         request.sortDescriptors = [.init(key: "title", ascending: true)]
-        let group = try stack.viewContext.fetch(request).first!.convertToValueType()
+        let group = try stack.viewContext.fetch(request).first!.convertToValueType()!
         await stack._deleteGroup(group)
         let count = try stack.viewContext.fetch(request).count
         XCTAssertEqual(count, 0)
@@ -52,7 +52,7 @@ final class DBTests: XCTestCase {
         let group = try stack.viewContext.fetch(request).first!
 
         let task = TodoTask.sample1
-        await stack._createNewTask(task, .list(group.convertToValueType()))
+        await stack._createNewTask(task, .list(group.convertToValueType()!))
         let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
         taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
         let result = try stack.viewContext.fetch(taskRequest)
@@ -82,10 +82,10 @@ final class DBTests: XCTestCase {
         await stack._createNewTask(task, .all)
         let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
         taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
-        var todoTask = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        var todoTask = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()!
         todoTask.title = "New"
         await stack._updateTask(todoTask)
-        let newTask = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let newTask = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()!
         XCTAssertEqual(newTask.id, todoTask.id)
         XCTAssertEqual(newTask.title, "New")
     }
@@ -96,7 +96,7 @@ final class DBTests: XCTestCase {
         await stack._createNewTask(task, .all)
         let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
         taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
-        let todoTask = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let todoTask = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()!
         await stack._deleteTask(todoTask)
         XCTAssertEqual(0, try! stack.viewContext.fetch(taskRequest).count)
     }
@@ -107,13 +107,13 @@ final class DBTests: XCTestCase {
         await stack._createNewTask(task, .all)
         let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
         taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
-        let todoTask = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let todoTask = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()!
         let group = TodoGroup.sample1
         await stack._createNewGroup(group)
         let groupRequest = C_Group.fetchRequest()
         groupRequest.sortDescriptors = [.init(key: "title", ascending: true)]
         let todoGroupObject = try stack.viewContext.fetch(groupRequest).first!
-        let todoGroup = todoGroupObject.convertToValueType()
+        let todoGroup = todoGroupObject.convertToValueType()!
         await stack._moveTask(todoTask.id, todoGroup.id)
         let newTask = try stack.viewContext.fetch(taskRequest).first!
         XCTAssertEqual(newTask.group?.id, todoGroup.id)
@@ -125,7 +125,7 @@ final class DBTests: XCTestCase {
         await stack._createNewTask(task, .all)
         let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
         taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
-        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()!
         let taskObject = await stack._getTaskObject(taskValue)
         XCTAssertEqual(taskObject?.id, taskValue.id)
     }
@@ -136,7 +136,7 @@ final class DBTests: XCTestCase {
         await stack._createNewTask(task, .all)
         let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
         taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
-        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()!
         let memo = TaskMemo.sample1
         await stack._updateMemo(taskValue, memo)
         let taskObject = try stack.viewContext.fetch(taskRequest).first!
@@ -150,7 +150,7 @@ final class DBTests: XCTestCase {
         await stack._createNewTask(task, .all)
         let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
         taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
-        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()!
         let memo = TaskMemo.sample1
         await stack._updateMemo(taskValue, memo)
         let taskObject = try stack.viewContext.fetch(taskRequest).first!
@@ -167,7 +167,7 @@ final class DBTests: XCTestCase {
         await stack._createNewTask(task, .all)
         let taskRequest = NSFetchRequest<C_Task>(entityName: "C_Task")
         taskRequest.sortDescriptors = [.init(key: "title", ascending: true)]
-        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()
+        let taskValue = try stack.viewContext.fetch(taskRequest).first!.convertToValueType()!
         let memo = TaskMemo.sample1
         await stack._updateMemo(taskValue, memo)
         let taskObject = try stack.viewContext.fetch(taskRequest).first!
@@ -188,7 +188,7 @@ final class DBTests: XCTestCase {
         let groupFetch = C_Group.fetchRequest()
         groupFetch.sortDescriptors = [.init(key: "title", ascending: true)]
         let group = try stack.viewContext.fetch(groupFetch).first!
-        let groupValue = group.convertToValueType()
+        let groupValue = group.convertToValueType()!
         let task1 = TodoTask.sample1 // completed = false Date(timeIntervalSince1970: 0)
         let task2 = TodoTask.sample2 // completed = false Date(timeIntervalSince1970: 1)
         let task3 = TodoTask.sample3 // completed = true Date(timeIntervalSince1970: 2)
@@ -196,13 +196,10 @@ final class DBTests: XCTestCase {
         await stack._createNewTask(task2, .list(groupValue))
         await stack._createNewTask(task3, .list(groupValue))
         let requests = await stack._getTodoListRequest(.list(groupValue), .createDate)
-        let completedTasks = try! stack.viewContext.fetch(requests.completed!)
-        let unCompletedTasks = try! stack.viewContext.fetch(requests.unCompleted!)
-        XCTAssertEqual(completedTasks.count, 1)
-        XCTAssertEqual(unCompletedTasks.count, 2)
-        XCTAssertEqual((completedTasks.first! as! C_Task).title, task3.title)
-        XCTAssertEqual((unCompletedTasks.first! as! C_Task).title, task2.title)
-        XCTAssertEqual((unCompletedTasks.last! as! C_Task).title, task1.title)
+        let tasks = try! stack.viewContext.fetch(requests!) as! [C_Task]
+        XCTAssertEqual(tasks.count, 3)
+        XCTAssertEqual(tasks.first?.title, TodoTask.sample3.title)
+        XCTAssertEqual(tasks.last?.title, TodoTask.sample1.title)
     }
 
     func testGetGroupListRequest() async throws {
@@ -226,13 +223,13 @@ final class DBTests: XCTestCase {
         XCTAssertEqual(groups.count, 1)
         let group1Object = groups.first!
         XCTAssertEqual(group1Object.title, TodoGroup.sample1.title)
-        let group1 = group1Object.convertToValueType()
+        let group1 = group1Object.convertToValueType()!
         await stack._createNewTask(.sample1, .list(group1))
         let requestForTask = C_Task.fetchRequest()
         requestForTask.sortDescriptors = [.init(key: "title", ascending: true)]
         let tasks = try! stack.viewContext.fetch(requestForTask)
         XCTAssertEqual(tasks.count, 1)
-        let movableRequestForTaskSample1 = await stack._getMovableGroupListRequest(tasks.first!.convertToValueType())
+        let movableRequestForTaskSample1 = await stack._getMovableGroupListRequest(tasks.first!.convertToValueType()!)
         let movableGroups = try! stack.viewContext.fetch(movableRequestForTaskSample1!)
         XCTAssertEqual(movableGroups.count, 1)
         XCTAssertEqual((movableGroups.first! as! C_Group).title, TodoGroup.sample2.title)

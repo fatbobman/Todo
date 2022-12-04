@@ -239,72 +239,66 @@ extension CoreDataStack {
     }
 
     @Sendable
-    func _getTodoListRequest(_ source: TaskSource, _ sortType: TaskSortType) async -> (unCompleted: NSFetchRequest<NSManagedObject>?, completed: NSFetchRequest<NSManagedObject>?) {
+    func _getTodoListRequest(_ source: TaskSource, _ sortType: TaskSortType) async -> NSFetchRequest<NSManagedObject>? {
         await viewContext.perform { [weak self] in
-            let completedRequest: NSFetchRequest<NSManagedObject>?
-            let unCompletedRequest: NSFetchRequest<NSManagedObject>?
-
+            let taskRequest: NSFetchRequest<NSManagedObject>?
             let sortDescriptions: [NSSortDescriptor]
             switch sortType {
             case .title:
                 sortDescriptions = [
                     .init(key: #keyPath(C_Task.title), ascending: true),
                     .init(key: #keyPath(C_Task.createDate), ascending: false),
-                    .init(key: #keyPath(C_Task.priority), ascending: false)
+                    .init(key: #keyPath(C_Task.priority), ascending: false),
+                    .init(key: #keyPath(C_Task.completed), ascending: true)
                 ]
             case .createDate:
                 sortDescriptions = [
                     .init(key: #keyPath(C_Task.createDate), ascending: false),
                     .init(key: #keyPath(C_Task.title), ascending: true),
-                    .init(key: #keyPath(C_Task.priority), ascending: false)
+                    .init(key: #keyPath(C_Task.priority), ascending: false),
+                    .init(key: #keyPath(C_Task.completed), ascending: true)
                 ]
             case .priority:
                 sortDescriptions = [
                     .init(key: #keyPath(C_Task.priority), ascending: false),
+                    .init(key: #keyPath(C_Task.title), ascending: true),
                     .init(key: #keyPath(C_Task.createDate), ascending: false),
-                    .init(key: #keyPath(C_Task.title), ascending: true)
+                    .init(key: #keyPath(C_Task.completed), ascending: true)
+                ]
+            case .completed:
+                sortDescriptions = [
+                    .init(key: #keyPath(C_Task.completed), ascending: true),
+                    .init(key: #keyPath(C_Task.title), ascending: true),
+                    .init(key: #keyPath(C_Task.createDate), ascending: false),
+                    .init(key: #keyPath(C_Task.priority), ascending: false)
                 ]
             }
 
-            var completedPredicate: NSPredicate?
-            var unCompletedPredicate: NSPredicate?
-
+            var predicate: NSPredicate?
             switch source {
             case .all:
-                completedPredicate = .init(format: "completed = YES")
-                unCompletedPredicate = .init(format: "completed = NO")
+                break
             case .completed:
-                completedPredicate = .init(format: "completed = TRUE")
-                unCompletedPredicate = nil
+                predicate = .init(format: "completed = TRUE")
             case .myDay:
-                completedPredicate = .init(format: "completed = YES And myDay = YES")
-                unCompletedPredicate = .init(format: "completed = NO And myDay = YES")
+                predicate = .init(format: "myDay = YES")
             case .list(let group):
                 guard case .objectID(let groupID) = group.id,
                       let groupObject = try? self?.viewContext.existingObject(with: groupID) as? C_Group else {
                     self?.logger.error("can't get group by \(group.id)")
-                    return (unCompleted: nil, completed: nil)
+                    return nil
                 }
-                completedPredicate = .init(format: "completed = YES And group = %@", groupObject)
-                unCompletedPredicate = .init(format: "completed = NO And group = %@", groupObject)
+                predicate = .init(format: "group = %@", groupObject)
             case .moveableGroupList:
                 fatalError("The call to moveableGroupList should not occur")
             }
 
-            completedRequest = NSFetchRequest<NSManagedObject>(entityName: "C_Task")
-            unCompletedRequest = NSFetchRequest<NSManagedObject>(entityName: "C_Task")
+            taskRequest = NSFetchRequest<NSManagedObject>(entityName: "C_Task")
 
-            completedRequest?.predicate = completedPredicate
-            completedRequest?.sortDescriptors = sortDescriptions
+            taskRequest?.predicate = predicate
+            taskRequest?.sortDescriptors = sortDescriptions
 
-            unCompletedRequest?.sortDescriptors = sortDescriptions
-            if source != .completed {
-                unCompletedRequest?.predicate = unCompletedPredicate
-            } else {
-                // 不获取任何数据
-                unCompletedRequest?.predicate = NSPredicate(value: false)
-            }
-            return (unCompleted: unCompletedRequest, completed: completedRequest)
+            return taskRequest
         }
     }
 
@@ -376,7 +370,7 @@ extension CoreDataStack: DBAPI {
     }
 
     public var getTodoListRequest: @Sendable (Core.TaskSource, Core.TaskSortType) async ->
-        (unCompleted: NSFetchRequest<NSManagedObject>?, completed: NSFetchRequest<NSManagedObject>?) {
+        NSFetchRequest<NSManagedObject>? {
         _getTodoListRequest
     }
 
